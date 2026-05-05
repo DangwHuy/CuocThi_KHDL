@@ -1,0 +1,489 @@
+{
+  "categories": [
+    {
+      "name_en": "Dairy",
+      "name_vi": "Sữa & Trứng",
+      "total": 8506,
+      "pct": 21.9,
+      "unique_products": 18,
+      "top_3": [
+        {
+          "name": "whole milk",
+          "count": 2502,
+          "pct_in_category": 29.4
+        },
+        {
+          "name": "yogurt",
+          "count": 1334,
+          "pct_in_category": 15.7
+        },
+        {
+          "name": "whipped/sour cream",
+          "count": 662,
+          "pct_in_category": 7.8
+        }
+      ],
+      "monthly_trend": [
+        342,
+        307,
+        311,
+        371,
+        340,
+        351,
+        372,
+        350,
+        362,
+        357,
+        321,
+        334,
+        373,
+        328,
+        378,
+        378,
+        378,
+        334,
+        394,
+        430,
+        331,
+        358,
+        367,
+        339
+      ],
+      "color": "#378ADD"
+    },
+    {
+      "name_en": "Other",
+      "name_vi": "Khác",
+      "total": 8389,
+      "pct": 21.6,
+      "unique_products": 103,
+      "top_3": [
+        {
+          "name": "shopping bags",
+          "count": 731,
+          "pct_in_category": 8.7
+        },
+        {
+          "name": "newspapers",
+          "count": 596,
+          "pct_in_category": 7.1
+        },
+        {
+          "name": "margarine",
+          "count": 491,
+          "pct_in_category": 5.9
+        }
+      ],
+      "monthly_trend": [
+        391,
+        359,
+        380,
+        427,
+        395,
+        404,
+        404,
+        407,
+        375,
+        403,
+        364,
+        360,
+        341,
+        284,
+        302,
+        315,
+        343,
+        310,
+        300,
+        353,
+        289,
+        284,
+        318,
+        281
+      ],
+      "color": "#5F5E5A"
+    },
+    {
+      "name_en": "Produce",
+      "name_vi": "Rau & Trái cây",
+      "total": 7639,
+      "pct": 19.7,
+      "unique_products": 12,
+      "top_3": [
+        {
+          "name": "other vegetables",
+          "count": 1898,
+          "pct_in_category": 24.8
+        },
+        {
+          "name": "root vegetables",
+          "count": 1071,
+          "pct_in_category": 14.0
+        },
+        {
+          "name": "tropical fruit",
+          "count": 1032,
+          "pct_in_category": 13.5
+        }
+      ],
+      "monthly_trend": [
+        256,
+        282,
+        274,
+        254,
+        295,
+        277,
+        269,
+        305,
+        227,
+        263,
+        257,
+        275,
+        386,
+        335,
+        359,
+        367,
+        374,
+        372,
+        339,
+        380,
+        358,
+        365,
+        417,
+        353
+      ],
+      "color": "#1D9E75"
+    },
+    {
+      "name_en": "Bakery",
+      "name_vi": "Bánh & Ngọt",
+      "total": 5122,
+      "pct": 13.2,
+      "unique_products": 11,
+      "top_3": [
+        {
+          "name": "rolls/buns",
+          "count": 1716,
+          "pct_in_category": 33.5
+        },
+        {
+          "name": "pastry",
+          "count": 785,
+          "pct_in_category": 15.3
+        },
+        {
+          "name": "brown bread",
+          "count": 571,
+          "pct_in_category": 11.1
+        }
+      ],
+      "monthly_trend": [
+        254,
+        209,
+        178,
+        221,
+        263,
+        214,
+        223,
+        212,
+        234,
+        262,
+        247,
+        213,
+        206,
+        175,
+        209,
+        205,
+        199,
+        224,
+        204,
+        241,
+        166,
+        197,
+        205,
+        161
+      ],
+      "color": "#D4A017"
+    },
+    {
+      "name_en": "Beverages",
+      "name_vi": "Đồ uống",
+      "total": 5039,
+      "pct": 13.0,
+      "unique_products": 12,
+      "top_3": [
+        {
+          "name": "soda",
+          "count": 1514,
+          "pct_in_category": 30.0
+        },
+        {
+          "name": "bottled water",
+          "count": 933,
+          "pct_in_category": 18.5
+        },
+        {
+          "name": "canned beer",
+          "count": 717,
+          "pct_in_category": 14.2
+        }
+      ],
+      "monthly_trend": [
+        189,
+        195,
+        199,
+        206,
+        227,
+        224,
+        223,
+        198,
+        181,
+        213,
+        199,
+        206,
+        220,
+        203,
+        215,
+        208,
+        223,
+        209,
+        226,
+        239,
+        214,
+        204,
+        235,
+        183
+      ],
+      "color": "#534AB7"
+    },
+    {
+      "name_en": "Meat",
+      "name_vi": "Thịt & Cá",
+      "total": 4070,
+      "pct": 10.5,
+      "unique_products": 11,
+      "top_3": [
+        {
+          "name": "sausage",
+          "count": 924,
+          "pct_in_category": 22.7
+        },
+        {
+          "name": "frankfurter",
+          "count": 580,
+          "pct_in_category": 14.3
+        },
+        {
+          "name": "pork",
+          "count": 566,
+          "pct_in_category": 13.9
+        }
+      ],
+      "monthly_trend": [
+        95,
+        85,
+        69,
+        82,
+        95,
+        100,
+        85,
+        103,
+        93,
+        93,
+        81,
+        85,
+        271,
+        235,
+        259,
+        226,
+        276,
+        245,
+        261,
+        278,
+        229,
+        262,
+        243,
+        219
+      ],
+      "color": "#D85A30"
+    }
+  ],
+  "top_products_overall": [
+    {
+      "name": "whole milk",
+      "category_en": "Dairy",
+      "category_vi": "Sữa & Trứng",
+      "count": 2502,
+      "pct": 6.5
+    },
+    {
+      "name": "other vegetables",
+      "category_en": "Produce",
+      "category_vi": "Rau & Trái cây",
+      "count": 1898,
+      "pct": 4.9
+    },
+    {
+      "name": "rolls/buns",
+      "category_en": "Bakery",
+      "category_vi": "Bánh & Ngọt",
+      "count": 1716,
+      "pct": 4.4
+    },
+    {
+      "name": "soda",
+      "category_en": "Beverages",
+      "category_vi": "Đồ uống",
+      "count": 1514,
+      "pct": 3.9
+    },
+    {
+      "name": "yogurt",
+      "category_en": "Dairy",
+      "category_vi": "Sữa & Trứng",
+      "count": 1334,
+      "pct": 3.4
+    },
+    {
+      "name": "root vegetables",
+      "category_en": "Produce",
+      "category_vi": "Rau & Trái cây",
+      "count": 1071,
+      "pct": 2.8
+    },
+    {
+      "name": "tropical fruit",
+      "category_en": "Produce",
+      "category_vi": "Rau & Trái cây",
+      "count": 1032,
+      "pct": 2.7
+    },
+    {
+      "name": "bottled water",
+      "category_en": "Beverages",
+      "category_vi": "Đồ uống",
+      "count": 933,
+      "pct": 2.4
+    },
+    {
+      "name": "sausage",
+      "category_en": "Meat",
+      "category_vi": "Thịt & Cá",
+      "count": 924,
+      "pct": 2.4
+    },
+    {
+      "name": "citrus fruit",
+      "category_en": "Produce",
+      "category_vi": "Rau & Trái cây",
+      "count": 812,
+      "pct": 2.1
+    },
+    {
+      "name": "pastry",
+      "category_en": "Bakery",
+      "category_vi": "Bánh & Ngọt",
+      "count": 785,
+      "pct": 2.0
+    },
+    {
+      "name": "pip fruit",
+      "category_en": "Produce",
+      "category_vi": "Rau & Trái cây",
+      "count": 744,
+      "pct": 1.9
+    },
+    {
+      "name": "shopping bags",
+      "category_en": "Other",
+      "category_vi": "Khác",
+      "count": 731,
+      "pct": 1.9
+    },
+    {
+      "name": "canned beer",
+      "category_en": "Beverages",
+      "category_vi": "Đồ uống",
+      "count": 717,
+      "pct": 1.8
+    },
+    {
+      "name": "bottled beer",
+      "category_en": "Beverages",
+      "category_vi": "Đồ uống",
+      "count": 687,
+      "pct": 1.8
+    },
+    {
+      "name": "whipped/sour cream",
+      "category_en": "Dairy",
+      "category_vi": "Sữa & Trứng",
+      "count": 662,
+      "pct": 1.7
+    },
+    {
+      "name": "newspapers",
+      "category_en": "Other",
+      "category_vi": "Khác",
+      "count": 596,
+      "pct": 1.5
+    },
+    {
+      "name": "frankfurter",
+      "category_en": "Meat",
+      "category_vi": "Thịt & Cá",
+      "count": 580,
+      "pct": 1.5
+    },
+    {
+      "name": "brown bread",
+      "category_en": "Bakery",
+      "category_vi": "Bánh & Ngọt",
+      "count": 571,
+      "pct": 1.5
+    },
+    {
+      "name": "pork",
+      "category_en": "Meat",
+      "category_vi": "Thịt & Cá",
+      "count": 566,
+      "pct": 1.5
+    }
+  ],
+  "month_labels": [
+    "2014/01",
+    "2014/02",
+    "2014/03",
+    "2014/04",
+    "2014/05",
+    "2014/06",
+    "2014/07",
+    "2014/08",
+    "2014/09",
+    "2014/10",
+    "2014/11",
+    "2014/12",
+    "2015/01",
+    "2015/02",
+    "2015/03",
+    "2015/04",
+    "2015/05",
+    "2015/06",
+    "2015/07",
+    "2015/08",
+    "2015/09",
+    "2015/10",
+    "2015/11",
+    "2015/12"
+  ],
+  "stats": {
+    "total_transactions": 38765,
+    "most_popular_en": "Dairy",
+    "most_popular_vi": "Sữa & Trứng",
+    "most_popular_count": 8506,
+    "fastest_growing_en": "Meat",
+    "fastest_growing_vi": "Thịt & Cá",
+    "fastest_growth_pct": 176.3,
+    "top_product": "whole milk",
+    "top_product_count": 2502
+  }
+}

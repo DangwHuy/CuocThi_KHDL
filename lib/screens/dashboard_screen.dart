@@ -11,6 +11,9 @@ import 'comparison_screen.dart';
 import 'data_explorer_screen.dart';
 import 'rfm_screen.dart';
 import 'seasonality_screen.dart';
+import 'clustering_screen.dart';
+import 'category_screen.dart';
+import 'anomaly_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -38,6 +41,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -50,7 +55,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final settings = Provider.of<SettingsProvider>(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      drawer: isMobile ? _buildDrawer(context, settings) : null,
       body: Row(
         children: [
           if (!isMobile)
@@ -93,6 +100,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   label: Text(settings.isVietnamese ? 'Mùa vụ' : 'Season'),
                 ),
                 NavigationRailDestination(
+                  icon: const Icon(Icons.hub_outlined),
+                  selectedIcon: const Icon(Icons.hub_rounded),
+                  label: Text(settings.isVietnamese ? 'Phân cụm' : 'Cluster'),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.category_outlined),
+                  selectedIcon: const Icon(Icons.category_rounded),
+                  label: Text(settings.isVietnamese ? 'Danh mục' : 'Category'),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(Icons.bug_report_outlined),
+                  selectedIcon: const Icon(Icons.bug_report_rounded),
+                  label: Text(settings.isVietnamese ? 'Bất thường' : 'Anomaly'),
+                ),
+                NavigationRailDestination(
                   icon: const Icon(Icons.settings_outlined),
                   selectedIcon: const Icon(Icons.settings_rounded),
                   label: Text(settings.isVietnamese ? 'Cài đặt' : 'Settings'),
@@ -109,6 +131,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 DataExplorerScreen(allItems: _edaData['all_items'] ?? {}),
                 RFMScreen(),
                 const SeasonalityScreen(),
+                const ClusteringScreen(),
+                const CategoryScreen(),
+                const AnomalyScreen(),
                 const SettingsScreen(),
               ],
             ),
@@ -119,23 +144,109 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ? BottomNavigationBar(
               backgroundColor: Theme.of(context).cardColor,
               selectedItemColor: AppTheme.primaryColor,
-              unselectedItemColor: Colors.grey,
-              currentIndex: _selectedIndex,
+              unselectedItemColor: Colors.grey.withOpacity(0.6),
+              currentIndex: _selectedIndex == 0 ? 0 
+                            : _selectedIndex == 1 ? 1 
+                            : _selectedIndex == 4 ? 2 
+                            : _selectedIndex == 8 ? 3 
+                            : 0,
               onTap: (index) {
-                setState(() => _selectedIndex = index);
+                if (index == 4) {
+                  _scaffoldKey.currentState?.openDrawer();
+                } else {
+                  int realIndex = 0;
+                  if (index == 0) realIndex = 0;
+                  else if (index == 1) realIndex = 1;
+                  else if (index == 2) realIndex = 4; // RFM
+                  else if (index == 3) realIndex = 8; // Bất thường
+                  setState(() => _selectedIndex = realIndex);
+                }
               },
               type: BottomNavigationBarType.fixed,
+              selectedFontSize: 10,
+              unselectedFontSize: 10,
               items: [
-                BottomNavigationBarItem(icon: const Icon(Icons.dashboard_outlined), activeIcon: const Icon(Icons.dashboard_rounded), label: settings.isVietnamese ? 'T.Quan' : 'Overview'),
+                BottomNavigationBarItem(icon: const Icon(Icons.dashboard_outlined), activeIcon: const Icon(Icons.dashboard_rounded), label: settings.isVietnamese ? 'T.Quan' : 'Home'),
                 BottomNavigationBarItem(icon: const Icon(Icons.auto_awesome_outlined), activeIcon: const Icon(Icons.auto_awesome_rounded), label: settings.isVietnamese ? 'AI' : 'AI'),
-                BottomNavigationBarItem(icon: const Icon(Icons.compare_arrows_outlined), activeIcon: const Icon(Icons.compare_arrows_rounded), label: settings.isVietnamese ? 'S.Sánh' : 'Comp'),
-                BottomNavigationBarItem(icon: const Icon(Icons.table_rows_outlined), activeIcon: const Icon(Icons.table_rows_rounded), label: settings.isVietnamese ? 'Dữ liệu' : 'Data'),
                 BottomNavigationBarItem(icon: const Icon(Icons.people_alt_outlined), activeIcon: const Icon(Icons.people_alt_rounded), label: settings.isVietnamese ? 'RFM' : 'RFM'),
-                BottomNavigationBarItem(icon: const Icon(Icons.insights_outlined), activeIcon: const Icon(Icons.insights_rounded), label: settings.isVietnamese ? 'Mùa vụ' : 'Season'),
-                BottomNavigationBarItem(icon: const Icon(Icons.settings_outlined), activeIcon: const Icon(Icons.settings_rounded), label: settings.isVietnamese ? 'C.Đặt' : 'Set'),
+                BottomNavigationBarItem(icon: const Icon(Icons.bug_report_outlined), activeIcon: const Icon(Icons.bug_report_rounded), label: settings.isVietnamese ? 'B.Thường' : 'Anomaly'),
+                BottomNavigationBarItem(icon: const Icon(Icons.menu_rounded), label: settings.isVietnamese ? 'Thêm' : 'More'),
               ],
             )
           : null,
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context, SettingsProvider settings) {
+    final navItems = [
+      {'icon': Icons.dashboard_rounded, 'label': settings.isVietnamese ? 'Tổng quan' : 'Overview', 'index': 0},
+      {'icon': Icons.auto_awesome_rounded, 'label': settings.isVietnamese ? 'AI Gợi ý' : 'AI Recs', 'index': 1},
+      {'icon': Icons.compare_arrows_rounded, 'label': settings.isVietnamese ? 'So sánh dữ liệu' : 'Comparison', 'index': 2},
+      {'icon': Icons.table_rows_rounded, 'label': settings.isVietnamese ? 'Khám phá dữ liệu' : 'Data Explorer', 'index': 3},
+      {'icon': Icons.people_alt_rounded, 'label': settings.isVietnamese ? 'Phân tích RFM' : 'RFM Analysis', 'index': 4},
+      {'icon': Icons.insights_rounded, 'label': settings.isVietnamese ? 'Phân tích Mùa vụ' : 'Seasonality', 'index': 5},
+      {'icon': Icons.hub_rounded, 'label': settings.isVietnamese ? 'Phân cụm Khách hàng' : 'Clustering', 'index': 6},
+      {'icon': Icons.category_rounded, 'label': settings.isVietnamese ? 'Phân tích Danh mục' : 'Category', 'index': 7},
+      {'icon': Icons.bug_report_rounded, 'label': settings.isVietnamese ? 'Phát hiện Bất thường' : 'Anomaly', 'index': 8},
+      {'icon': Icons.settings_rounded, 'label': settings.isVietnamese ? 'Cài đặt hệ thống' : 'Settings', 'index': 9},
+    ];
+
+    return Drawer(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      child: Column(
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppTheme.primaryColor, AppTheme.primaryColor.withOpacity(0.7)],
+              ),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.analytics_rounded, size: 50, color: Colors.white),
+                  const SizedBox(height: 10),
+                  Text(
+                    settings.isVietnamese ? 'HỆ THỐNG KHDL' : 'DS SYSTEM',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: navItems.length,
+              itemBuilder: (context, i) {
+                final item = navItems[i];
+                final isSelected = _selectedIndex == item['index'];
+                return ListTile(
+                  leading: Icon(item['icon'] as IconData, color: isSelected ? AppTheme.primaryColor : Colors.grey),
+                  title: Text(
+                    item['label'] as String,
+                    style: TextStyle(
+                      color: isSelected ? AppTheme.primaryColor : Colors.grey.shade400,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  selected: isSelected,
+                  onTap: () {
+                    setState(() => _selectedIndex = item['index'] as int);
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            ),
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text('Version 1.0.0', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+          ),
+        ],
+      ),
     );
   }
 
@@ -155,19 +266,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
     
     return CustomScrollView(
       slivers: [
-        SliverAppBar(
-          expandedHeight: 120,
-          floating: true,
-          backgroundColor: Colors.transparent,
-          flexibleSpace: FlexibleSpaceBar(
-            title: Text(
-              settings.isVietnamese ? 'Hệ thống Phân tích Bán lẻ' : 'Retail Analytics System',
-              style: Theme.of(context).textTheme.titleLarge,
+        if (!isMobile)
+          SliverAppBar(
+            expandedHeight: 120,
+            floating: false,
+            pinned: false,
+            backgroundColor: Colors.transparent,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                settings.isVietnamese ? 'Hệ thống Phân tích Bán lẻ' : 'Retail Analytics System',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              centerTitle: false,
+              titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
             ),
-            centerTitle: false,
-            titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
           ),
-        ),
+        if (isMobile)
+          SliverAppBar(
+            floating: false,
+            pinned: false,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.menu_rounded),
+              onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+            ),
+            title: Text(
+              settings.isVietnamese ? 'Tổng quan' : 'Overview',
+              style: const TextStyle(
+                fontSize: 19,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        if (isMobile) const SliverToBoxAdapter(child: SizedBox(height: 10)),
         SliverPadding(
           padding: const EdgeInsets.all(20),
           sliver: SliverGrid(
@@ -177,11 +313,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               mainAxisSpacing: 20,
               childAspectRatio: isMobile ? 1.2 : 1.5,
             ),
-            delegate: SliverChildListDelegate([
-              _buildSummaryCard(settings.isVietnamese ? 'Số mặt hàng (Top 10)' : 'Top 10 Items', '${topItems.length}', Icons.shopping_bag_rounded, Colors.blue),
-              _buildSummaryCard(settings.isVietnamese ? 'Số tháng (GD)' : 'Months', '${monthlyTrend.length}', Icons.calendar_month_rounded, Colors.orange),
-              _buildSummaryCard(settings.isVietnamese ? 'Giỏ hàng 1 món' : '1-item Baskets', '${basketSizes["1"]}', Icons.shopping_cart_rounded, Colors.purple),
-              _buildSummaryCard(settings.isVietnamese ? 'Bán chạy nhất' : 'Top Item', DataService.translateItem(topItems.keys.first), Icons.trending_up_rounded, Colors.green),
+          delegate: SliverChildListDelegate([
+              _buildSummaryCard(settings.isVietnamese ? 'Mặt hàng' : 'Items', '${topItems.length}', Icons.shopping_bag_rounded, Colors.blue),
+              _buildSummaryCard(settings.isVietnamese ? 'Số tháng' : 'Months', '${monthlyTrend.length}', Icons.calendar_month_rounded, Colors.orange),
+              _buildSummaryCard(settings.isVietnamese ? 'Giỏ 1 món' : '1-item Baskets', '${basketSizes["1"]}', Icons.shopping_cart_rounded, Colors.purple),
+              _buildSummaryCard(settings.isVietnamese ? 'Bán chạy' : 'Top Item', DataService.translateItem(topItems.keys.first), Icons.trending_up_rounded, Colors.green),
             ]),
           ),
         ),

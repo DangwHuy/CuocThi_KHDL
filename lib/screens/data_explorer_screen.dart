@@ -52,123 +52,152 @@ class _DataExplorerScreenState extends State<DataExplorerScreen> {
     final settings = Provider.of<SettingsProvider>(context);
     final maxSales = widget.allItems.values.fold(0, (max, e) => e > max ? e : max);
 
+    final isMobile = MediaQuery.of(context).size.width < 800;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  settings.isVietnamese ? 'Kho Dữ Liệu Sản Phẩm' : 'Product Data Explorer',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: isMobile ? 60 : 120,
+            floating: false,
+            pinned: false,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: isMobile ? IconButton(
+              icon: const Icon(Icons.menu_rounded),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ) : null,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                settings.isVietnamese ? 'Kho Dữ Liệu' : 'Data Explorer',
+                style: TextStyle(
+                  fontSize: isMobile ? 19 : 24,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  settings.isVietnamese 
-                    ? 'Thống kê chi tiết doanh số của toàn bộ 167 mặt hàng trong tập dữ liệu.'
-                    : 'Detailed sales statistics for all 167 items in the dataset.',
-                  style: const TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        onChanged: _filterSearch,
-                        decoration: InputDecoration(
-                          hintText: settings.isVietnamese ? 'Tìm kiếm sản phẩm...' : 'Search items...',
-                          prefixIcon: const Icon(Icons.search),
-                          filled: true,
-                          fillColor: Theme.of(context).cardColor,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
+              ),
+              centerTitle: isMobile,
+              titlePadding: EdgeInsets.only(
+                left: isMobile ? 0 : 24, 
+                bottom: isMobile ? 14 : 16
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    settings.isVietnamese 
+                      ? 'Thống kê chi tiết doanh số của toàn bộ 167 mặt hàng trong tập dữ liệu.'
+                      : 'Detailed sales statistics for all 167 items in the dataset.',
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: _filterSearch,
+                          decoration: InputDecoration(
+                            hintText: settings.isVietnamese ? 'Tìm kiếm sản phẩm...' : 'Search items...',
+                            prefixIcon: const Icon(Icons.search),
+                            filled: true,
+                            fillColor: Theme.of(context).cardColor,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButton<String>(
-                        value: _sortBy,
-                        underline: const SizedBox(),
-                        items: [
-                          DropdownMenuItem(value: 'desc', child: Text(settings.isVietnamese ? 'Bán chạy' : 'Top Sales')),
-                          DropdownMenuItem(value: 'asc', child: Text(settings.isVietnamese ? 'Bán ít' : 'Low Sales')),
-                          DropdownMenuItem(value: 'alpha', child: Text(settings.isVietnamese ? 'Tên A-Z' : 'Name A-Z')),
-                        ],
-                        onChanged: (val) {
-                          if (val != null) {
-                            _sortBy = val;
-                            _sortItems();
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              itemCount: _filteredItems.length,
-              itemBuilder: (context, index) {
-                final entry = _filteredItems[index];
-                final progress = entry.value / maxSales;
-                
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.white.withOpacity(0.05)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              settings.isVietnamese ? DataService.translateItem(entry.key) : entry.key,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                          ),
-                          Text(
-                            '${entry.value} ${settings.isVietnamese ? 'đã bán' : 'sold'}',
-                            style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          backgroundColor: Colors.white.withOpacity(0.05),
-                          color: AppTheme.primaryColor,
-                          minHeight: 8,
+                      const SizedBox(width: 16),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: DropdownButton<String>(
+                          value: _sortBy,
+                          underline: const SizedBox(),
+                          items: [
+                            DropdownMenuItem(value: 'desc', child: Text(settings.isVietnamese ? 'Nhiều nhất' : 'Highest')),
+                            DropdownMenuItem(value: 'asc', child: Text(settings.isVietnamese ? 'Ít nhất' : 'Lowest')),
+                            DropdownMenuItem(value: 'alpha', child: Text(settings.isVietnamese ? 'A-Z' : 'A-Z')),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              _sortBy = val;
+                              _sortItems();
+                            }
+                          },
                         ),
                       ),
                     ],
                   ),
-                );
-              },
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final entry = _filteredItems[index];
+                  final sales = entry.value;
+                  final percentage = sales / maxSales;
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                settings.isVietnamese ? DataService.translateItem(entry.key) : entry.key,
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                            ),
+                            Text(
+                              '$sales ${settings.isVietnamese ? "GD" : "txns"}',
+                              style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: percentage,
+                            backgroundColor: Colors.white.withOpacity(0.05),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Color.lerp(Colors.blue, AppTheme.primaryColor, percentage) ?? AppTheme.primaryColor,
+                            ),
+                            minHeight: 6,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                childCount: _filteredItems.length,
+              ),
+            ),
+          ),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 40)),
         ],
       ),
     );

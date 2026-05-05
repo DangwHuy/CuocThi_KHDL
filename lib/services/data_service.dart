@@ -44,6 +44,36 @@ class DataService {
     }
   }
 
+  static Future<Map<String, dynamic>> loadClustering() async {
+    try {
+      final jsonStr = await rootBundle.loadString('assets/data/clustering_data.json');
+      return json.decode(jsonStr);
+    } catch (e) {
+      print('Error loading Clustering: $e');
+      return {};
+    }
+  }
+
+  static Future<Map<String, dynamic>> loadCategory() async {
+    try {
+      final jsonStr = await rootBundle.loadString('assets/data/category_data.json');
+      return json.decode(jsonStr);
+    } catch (e) {
+      print('Error loading Category: $e');
+      return {};
+    }
+  }
+
+  static Future<Map<String, dynamic>> loadAnomaly() async {
+    try {
+      final jsonStr = await rootBundle.loadString('assets/data/anomaly_data.json');
+      return json.decode(jsonStr);
+    } catch (e) {
+      print('Error loading Anomaly: $e');
+      return {};
+    }
+  }
+
   static Map<String, int> analyzeTopItems(List<List<dynamic>> data) {
     if (data.isEmpty) return {};
     

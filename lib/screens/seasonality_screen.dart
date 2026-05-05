@@ -79,21 +79,28 @@ class _SeasonalityScreenState extends State<SeasonalityScreen>
             slivers: [
               // AppBar
               SliverAppBar(
-                expandedHeight: 120,
-                floating: true,
+                expandedHeight: mob ? 60 : 120,
+                floating: false,
+                pinned: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
+                leading: mob ? IconButton(
+                  icon: const Icon(Icons.menu_rounded),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                ) : null,
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(
-                    vi ? 'Phân tích Mùa vụ & Xu hướng' : 'Seasonality & Trend Analysis',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                      letterSpacing: 0.5,
+                    vi ? 'Mùa vụ & Xu hướng' : 'Seasonality & Trend',
+                    style: TextStyle(
+                      fontSize: mob ? 19 : 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  centerTitle: false,
-                  titlePadding: const EdgeInsets.only(left: 24, bottom: 20),
+                  centerTitle: mob,
+                  titlePadding: EdgeInsets.only(
+                    left: mob ? 0 : 24, 
+                    bottom: mob ? 14 : 20
+                  ),
                 ),
               ),
 

@@ -108,16 +108,28 @@ class _RFMScreenState extends State<RFMScreen> with TickerProviderStateMixin {
           slivers: [
             // ── App Bar ──────────────────────────────────────────
             SliverAppBar(
-              expandedHeight: 120,
-              floating: true,
+              expandedHeight: isMobile ? 60 : 120,
+              floating: false,
+              pinned: false,
               backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: isMobile ? IconButton(
+                icon: const Icon(Icons.menu_rounded),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ) : null,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
-                  settings.isVietnamese ? 'Phân tích RFM Khách hàng' : 'Customer RFM Analysis',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  settings.isVietnamese ? 'Phân tích RFM' : 'RFM Analysis',
+                  style: TextStyle(
+                    fontSize: isMobile ? 19 : 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                centerTitle: false,
-                titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+                centerTitle: isMobile,
+                titlePadding: EdgeInsets.only(
+                  left: isMobile ? 0 : 20, 
+                  bottom: isMobile ? 14 : 16
+                ),
               ),
             ),
 

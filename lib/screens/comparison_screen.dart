@@ -13,44 +13,75 @@ class ComparisonScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: isMobile
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeroSection(context, settings),
-                  const SizedBox(height: 24),
-                  _buildSideCards(context, settings),
-                  const SizedBox(height: 40),
-                  _buildTechSpecs(context, settings),
-                  const SizedBox(height: 40),
-                  _buildApplications(context, settings, isMobile: true),
-                ],
-              )
-            : Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 7,
-                    child: Column(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: isMobile ? 60 : 120,
+            floating: false,
+            pinned: false,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: isMobile ? IconButton(
+              icon: const Icon(Icons.menu_rounded),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ) : null,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                settings.isVietnamese ? 'So sánh thuật toán' : 'Algorithm Comparison',
+                style: TextStyle(
+                  fontSize: isMobile ? 19 : 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              centerTitle: isMobile,
+              titlePadding: EdgeInsets.only(
+                left: isMobile ? 0 : 24, 
+                bottom: isMobile ? 14 : 16
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: isMobile
+                  ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildHeroSection(context, settings),
+                        const SizedBox(height: 24),
+                        _buildSideCards(context, settings),
                         const SizedBox(height: 40),
                         _buildTechSpecs(context, settings),
                         const SizedBox(height: 40),
-                        _buildApplications(context, settings, isMobile: false),
+                        _buildApplications(context, settings, isMobile: true),
+                      ],
+                    )
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 7,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildHeroSection(context, settings),
+                              const SizedBox(height: 40),
+                              _buildTechSpecs(context, settings),
+                              const SizedBox(height: 40),
+                              _buildApplications(context, settings, isMobile: false),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 32),
+                        Expanded(
+                          flex: 3,
+                          child: _buildSideCards(context, settings),
+                        ),
                       ],
                     ),
-                  ),
-                  const SizedBox(width: 32),
-                  Expanded(
-                    flex: 3,
-                    child: _buildSideCards(context, settings),
-                  ),
-                ],
-              ),
+            ),
+          ),
+        ],
       ),
     );
   }

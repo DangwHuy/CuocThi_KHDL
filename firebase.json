@@ -1,1 +1,39 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"cuocthi-khdl","appId":"1:665554379758:android:9fca21cb44ac285f6ea4ff","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"cuocthi-khdl","configurations":{"android":"1:665554379758:android:9fca21cb44ac285f6ea4ff","ios":"1:665554379758:ios:749594f141e85a956ea4ff","macos":"1:665554379758:ios:749594f141e85a956ea4ff","web":"1:665554379758:web:0c034577d02f59ac6ea4ff","windows":"1:665554379758:web:c7d8f891f711704f6ea4ff"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "cuocthi-khdl",
+          "appId": "1:665554379758:android:9fca21cb44ac285f6ea4ff",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "cuocthi-khdl",
+          "configurations": {
+            "android": "1:665554379758:android:9fca21cb44ac285f6ea4ff",
+            "ios": "1:665554379758:ios:749594f141e85a956ea4ff",
+            "macos": "1:665554379758:ios:749594f141e85a956ea4ff",
+            "web": "1:665554379758:web:0c034577d02f59ac6ea4ff",
+            "windows": "1:665554379758:web:c7d8f891f711704f6ea4ff"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
