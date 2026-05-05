@@ -1,0 +1,1038 @@
+{
+  "specialty chocolate": [
+    {
+      "recommend": "citrus fruit",
+      "confidence": 0.088,
+      "lift": 1.654
+    },
+    {
+      "recommend": "tropical fruit",
+      "confidence": 0.084,
+      "lift": 1.235
+    }
+  ],
+  "citrus fruit": [
+    {
+      "recommend": "specialty chocolate",
+      "confidence": 0.026,
+      "lift": 1.654
+    },
+    {
+      "recommend": "candy",
+      "confidence": 0.019,
+      "lift": 1.313
+    },
+    {
+      "recommend": "napkins",
+      "confidence": 0.026,
+      "lift": 1.194
+    },
+    {
+      "recommend": "frozen vegetables",
+      "confidence": 0.03,
+      "lift": 1.078
+    },
+    {
+      "recommend": "butter",
+      "confidence": 0.036,
+      "lift": 1.036
+    }
+  ],
+  "tropical fruit": [
+    {
+      "recommend": "flour",
+      "confidence": 0.016,
+      "lift": 1.617
+    },
+    {
+      "recommend": "cat food",
+      "confidence": 0.015,
+      "lift": 1.251
+    },
+    {
+      "recommend": "specialty chocolate",
+      "confidence": 0.02,
+      "lift": 1.235
+    },
+    {
+      "recommend": "uht-milk",
+      "confidence": 0.023,
+      "lift": 1.061
+    }
+  ],
+  "flour": [
+    {
+      "recommend": "tropical fruit",
+      "confidence": 0.11,
+      "lift": 1.617
+    }
+  ],
+  "beverages": [
+    {
+      "recommend": "sausage",
+      "confidence": 0.093,
+      "lift": 1.537
+    },
+    {
+      "recommend": "soda",
+      "confidence": 0.113,
+      "lift": 1.163
+    },
+    {
+      "recommend": "bottled water",
+      "confidence": 0.065,
+      "lift": 1.063
+    }
+  ],
+  "sausage": [
+    {
+      "recommend": "beverages",
+      "confidence": 0.025,
+      "lift": 1.537
+    },
+    {
+      "recommend": "curd",
+      "confidence": 0.049,
+      "lift": 1.447
+    },
+    {
+      "recommend": "sliced cheese",
+      "confidence": 0.019,
+      "lift": 1.341
+    },
+    {
+      "recommend": "frozen meals",
+      "confidence": 0.021,
+      "lift": 1.254
+    },
+    {
+      "recommend": "grapes",
+      "confidence": 0.018,
+      "lift": 1.227
+    }
+  ],
+  "napkins": [
+    {
+      "recommend": "pastry",
+      "confidence": 0.079,
+      "lift": 1.519
+    },
+    {
+      "recommend": "citrus fruit",
+      "confidence": 0.063,
+      "lift": 1.194
+    }
+  ],
+  "pastry": [
+    {
+      "recommend": "napkins",
+      "confidence": 0.034,
+      "lift": 1.519
+    },
+    {
+      "recommend": "brown bread",
+      "confidence": 0.039,
+      "lift": 1.03
+    },
+    {
+      "recommend": "sausage",
+      "confidence": 0.062,
+      "lift": 1.028
+    }
+  ],
+  "processed cheese": [
+    {
+      "recommend": "root vegetables",
+      "confidence": 0.105,
+      "lift": 1.513
+    },
+    {
+      "recommend": "rolls/buns",
+      "confidence": 0.145,
+      "lift": 1.316
+    }
+  ],
+  "root vegetables": [
+    {
+      "recommend": "processed cheese",
+      "confidence": 0.015,
+      "lift": 1.513
+    },
+    {
+      "recommend": "sliced cheese",
+      "confidence": 0.017,
+      "lift": 1.232
+    },
+    {
+      "recommend": "meat",
+      "confidence": 0.019,
+      "lift": 1.141
+    },
+    {
+      "recommend": "frozen vegetables",
+      "confidence": 0.031,
+      "lift": 1.098
+    },
+    {
+      "recommend": "grapes",
+      "confidence": 0.015,
+      "lift": 1.065
+    }
+  ],
+  "pip fruit": [
+    {
+      "recommend": "hard cheese",
+      "confidence": 0.022,
+      "lift": 1.483
+    },
+    {
+      "recommend": "chocolate",
+      "confidence": 0.027,
+      "lift": 1.155
+    },
+    {
+      "recommend": "berries",
+      "confidence": 0.023,
+      "lift": 1.063
+    }
+  ],
+  "hard cheese": [
+    {
+      "recommend": "pip fruit",
+      "confidence": 0.073,
+      "lift": 1.483
+    },
+    {
+      "recommend": "rolls/buns",
+      "confidence": 0.114,
+      "lift": 1.033
+    },
+    {
+      "recommend": "yogurt",
+      "confidence": 0.086,
+      "lift": 1.006
+    }
+  ],
+  "yogurt": [
+    {
+      "recommend": "soft cheese",
+      "confidence": 0.015,
+      "lift": 1.475
+    },
+    {
+      "recommend": "detergent",
+      "confidence": 0.012,
+      "lift": 1.444
+    },
+    {
+      "recommend": "chewing gum",
+      "confidence": 0.016,
+      "lift": 1.359
+    },
+    {
+      "recommend": "herbs",
+      "confidence": 0.013,
+      "lift": 1.253
+    },
+    {
+      "recommend": "sausage",
+      "confidence": 0.067,
+      "lift": 1.109
+    }
+  ],
+  "soft cheese": [
+    {
+      "recommend": "yogurt",
+      "confidence": 0.127,
+      "lift": 1.475
+    }
+  ],
+  "curd": [
+    {
+      "recommend": "sausage",
+      "confidence": 0.087,
+      "lift": 1.447
+    },
+    {
+      "recommend": "dessert",
+      "confidence": 0.03,
+      "lift": 1.262
+    },
+    {
+      "recommend": "chicken",
+      "confidence": 0.034,
+      "lift": 1.21
+    },
+    {
+      "recommend": "whipped/sour cream",
+      "confidence": 0.05,
+      "lift": 1.135
+    },
+    {
+      "recommend": "beef",
+      "confidence": 0.038,
+      "lift": 1.11
+    }
+  ],
+  "detergent": [
+    {
+      "recommend": "yogurt",
+      "confidence": 0.124,
+      "lift": 1.444
+    },
+    {
+      "recommend": "rolls/buns",
+      "confidence": 0.116,
+      "lift": 1.057
+    },
+    {
+      "recommend": "whole milk",
+      "confidence": 0.163,
+      "lift": 1.031
+    }
+  ],
+  "sugar": [
+    {
+      "recommend": "bottled water",
+      "confidence": 0.083,
+      "lift": 1.368
+    }
+  ],
+  "bottled water": [
+    {
+      "recommend": "sugar",
+      "confidence": 0.024,
+      "lift": 1.368
+    },
+    {
+      "recommend": "beverages",
+      "confidence": 0.018,
+      "lift": 1.063
+    }
+  ],
+  "white bread": [
+    {
+      "recommend": "canned beer",
+      "confidence": 0.064,
+      "lift": 1.366
+    },
+    {
+      "recommend": "domestic eggs",
+      "confidence": 0.042,
+      "lift": 1.126
+    },
+    {
+      "recommend": "brown bread",
+      "confidence": 0.042,
+      "lift": 1.11
+    }
+  ],
+  "canned beer": [
+    {
+      "recommend": "white bread",
+      "confidence": 0.033,
+      "lift": 1.366
+    },
+    {
+      "recommend": "brown bread",
+      "confidence": 0.051,
+      "lift": 1.363
+    },
+    {
+      "recommend": "salty snack",
+      "confidence": 0.021,
+      "lift": 1.138
+    },
+    {
+      "recommend": "newspapers",
+      "confidence": 0.04,
+      "lift": 1.025
+    },
+    {
+      "recommend": "frozen vegetables",
+      "confidence": 0.028,
+      "lift": 1.017
+    }
+  ],
+  "brown bread": [
+    {
+      "recommend": "canned beer",
+      "confidence": 0.064,
+      "lift": 1.363
+    },
+    {
+      "recommend": "beef",
+      "confidence": 0.041,
+      "lift": 1.203
+    },
+    {
+      "recommend": "pork",
+      "confidence": 0.044,
+      "lift": 1.197
+    },
+    {
+      "recommend": "white bread",
+      "confidence": 0.027,
+      "lift": 1.11
+    },
+    {
+      "recommend": "frankfurter",
+      "confidence": 0.041,
+      "lift": 1.082
+    }
+  ],
+  "chewing gum": [
+    {
+      "recommend": "yogurt",
+      "confidence": 0.117,
+      "lift": 1.359
+    }
+  ],
+  "sliced cheese": [
+    {
+      "recommend": "sausage",
+      "confidence": 0.081,
+      "lift": 1.341
+    },
+    {
+      "recommend": "root vegetables",
+      "confidence": 0.086,
+      "lift": 1.232
+    }
+  ],
+  "frozen vegetables": [
+    {
+      "recommend": "beef",
+      "confidence": 0.045,
+      "lift": 1.336
+    },
+    {
+      "recommend": "sausage",
+      "confidence": 0.074,
+      "lift": 1.226
+    },
+    {
+      "recommend": "bottled beer",
+      "confidence": 0.05,
+      "lift": 1.106
+    },
+    {
+      "recommend": "root vegetables",
+      "confidence": 0.076,
+      "lift": 1.098
+    },
+    {
+      "recommend": "citrus fruit",
+      "confidence": 0.057,
+      "lift": 1.078
+    }
+  ],
+  "beef": [
+    {
+      "recommend": "frozen vegetables",
+      "confidence": 0.037,
+      "lift": 1.336
+    },
+    {
+      "recommend": "margarine",
+      "confidence": 0.041,
+      "lift": 1.283
+    },
+    {
+      "recommend": "newspapers",
+      "confidence": 0.049,
+      "lift": 1.265
+    },
+    {
+      "recommend": "brown bread",
+      "confidence": 0.045,
+      "lift": 1.203
+    },
+    {
+      "recommend": "curd",
+      "confidence": 0.037,
+      "lift": 1.11
+    }
+  ],
+  "margarine": [
+    {
+      "recommend": "frankfurter",
+      "confidence": 0.05,
+      "lift": 1.319
+    },
+    {
+      "recommend": "beef",
+      "confidence": 0.044,
+      "lift": 1.283
+    },
+    {
+      "recommend": "butter",
+      "confidence": 0.044,
+      "lift": 1.237
+    },
+    {
+      "recommend": "pork",
+      "confidence": 0.041,
+      "lift": 1.119
+    },
+    {
+      "recommend": "chicken",
+      "confidence": 0.031,
+      "lift": 1.117
+    }
+  ],
+  "frankfurter": [
+    {
+      "recommend": "margarine",
+      "confidence": 0.042,
+      "lift": 1.319
+    },
+    {
+      "recommend": "coffee",
+      "confidence": 0.039,
+      "lift": 1.232
+    },
+    {
+      "recommend": "cream cheese",
+      "confidence": 0.027,
+      "lift": 1.122
+    },
+    {
+      "recommend": "other vegetables",
+      "confidence": 0.136,
+      "lift": 1.116
+    },
+    {
+      "recommend": "brown bread",
+      "confidence": 0.041,
+      "lift": 1.082
+    }
+  ],
+  "rolls/buns": [
+    {
+      "recommend": "processed cheese",
+      "confidence": 0.013,
+      "lift": 1.316
+    },
+    {
+      "recommend": "packaged fruit/vegetables",
+      "confidence": 0.011,
+      "lift": 1.288
+    },
+    {
+      "recommend": "seasonal products",
+      "confidence": 0.009,
+      "lift": 1.286
+    },
+    {
+      "recommend": "red/blush wine",
+      "confidence": 0.012,
+      "lift": 1.158
+    },
+    {
+      "recommend": "chocolate",
+      "confidence": 0.026,
+      "lift": 1.082
+    }
+  ],
+  "candy": [
+    {
+      "recommend": "citrus fruit",
+      "confidence": 0.07,
+      "lift": 1.313
+    }
+  ],
+  "packaged fruit/vegetables": [
+    {
+      "recommend": "rolls/buns",
+      "confidence": 0.142,
+      "lift": 1.288
+    }
+  ],
+  "seasonal products": [
+    {
+      "recommend": "rolls/buns",
+      "confidence": 0.142,
+      "lift": 1.286
+    }
+  ],
+  "newspapers": [
+    {
+      "recommend": "beef",
+      "confidence": 0.043,
+      "lift": 1.265
+    },
+    {
+      "recommend": "domestic eggs",
+      "confidence": 0.04,
+      "lift": 1.065
+    },
+    {
+      "recommend": "canned beer",
+      "confidence": 0.048,
+      "lift": 1.025
+    },
+    {
+      "recommend": "butter",
+      "confidence": 0.036,
+      "lift": 1.024
+    }
+  ],
+  "dessert": [
+    {
+      "recommend": "curd",
+      "confidence": 0.042,
+      "lift": 1.262
+    },
+    {
+      "recommend": "shopping bags",
+      "confidence": 0.051,
+      "lift": 1.072
+    },
+    {
+      "recommend": "sausage",
+      "confidence": 0.062,
+      "lift": 1.033
+    }
+  ],
+  "frozen meals": [
+    {
+      "recommend": "sausage",
+      "confidence": 0.076,
+      "lift": 1.254
+    },
+    {
+      "recommend": "other vegetables",
+      "confidence": 0.127,
+      "lift": 1.044
+    }
+  ],
+  "herbs": [
+    {
+      "recommend": "yogurt",
+      "confidence": 0.108,
+      "lift": 1.253
+    }
+  ],
+  "cat food": [
+    {
+      "recommend": "tropical fruit",
+      "confidence": 0.085,
+      "lift": 1.251
+    }
+  ],
+  "oil": [
+    {
+      "recommend": "soda",
+      "confidence": 0.121,
+      "lift": 1.247
+    }
+  ],
+  "soda": [
+    {
+      "recommend": "oil",
+      "confidence": 0.019,
+      "lift": 1.247
+    },
+    {
+      "recommend": "beverages",
+      "confidence": 0.019,
+      "lift": 1.163
+    },
+    {
+      "recommend": "sausage",
+      "confidence": 0.061,
+      "lift": 1.015
+    },
+    {
+      "recommend": "grapes",
+      "confidence": 0.014,
+      "lift": 1.001
+    }
+  ],
+  "butter": [
+    {
+      "recommend": "margarine",
+      "confidence": 0.04,
+      "lift": 1.237
+    },
+    {
+      "recommend": "fruit/vegetable juice",
+      "confidence": 0.04,
+      "lift": 1.171
+    },
+    {
+      "recommend": "frankfurter",
+      "confidence": 0.04,
+      "lift": 1.055
+    },
+    {
+      "recommend": "bottled beer",
+      "confidence": 0.047,
+      "lift": 1.047
+    },
+    {
+      "recommend": "citrus fruit",
+      "confidence": 0.055,
+      "lift": 1.036
+    }
+  ],
+  "coffee": [
+    {
+      "recommend": "frankfurter",
+      "confidence": 0.047,
+      "lift": 1.232
+    },
+    {
+      "recommend": "domestic eggs",
+      "confidence": 0.044,
+      "lift": 1.197
+    }
+  ],
+  "grapes": [
+    {
+      "recommend": "sausage",
+      "confidence": 0.074,
+      "lift": 1.227
+    },
+    {
+      "recommend": "root vegetables",
+      "confidence": 0.074,
+      "lift": 1.065
+    },
+    {
+      "recommend": "soda",
+      "confidence": 0.097,
+      "lift": 1.001
+    }
+  ],
+  "bottled beer": [
+    {
+      "recommend": "sausage",
+      "confidence": 0.074,
+      "lift": 1.222
+    },
+    {
+      "recommend": "frozen vegetables",
+      "confidence": 0.031,
+      "lift": 1.106
+    },
+    {
+      "recommend": "fruit/vegetable juice",
+      "confidence": 0.037,
+      "lift": 1.084
+    },
+    {
+      "recommend": "hamburger meat",
+      "confidence": 0.024,
+      "lift": 1.08
+    },
+    {
+      "recommend": "butter",
+      "confidence": 0.037,
+      "lift": 1.047
+    }
+  ],
+  "chicken": [
+    {
+      "recommend": "curd",
+      "confidence": 0.041,
+      "lift": 1.21
+    },
+    {
+      "recommend": "margarine",
+      "confidence": 0.036,
+      "lift": 1.117
+    },
+    {
+      "recommend": "whipped/sour cream",
+      "confidence": 0.046,
+      "lift": 1.042
+    }
+  ],
+  "onions": [
+    {
+      "recommend": "whipped/sour cream",
+      "confidence": 0.053,
+      "lift": 1.208
+    }
+  ],
+  "whipped/sour cream": [
+    {
+      "recommend": "onions",
+      "confidence": 0.024,
+      "lift": 1.208
+    },
+    {
+      "recommend": "curd",
+      "confidence": 0.038,
+      "lift": 1.135
+    },
+    {
+      "recommend": "chicken",
+      "confidence": 0.029,
+      "lift": 1.042
+    }
+  ],
+  "butter milk": [
+    {
+      "recommend": "shopping bags",
+      "confidence": 0.057,
+      "lift": 1.199
+    }
+  ],
+  "shopping bags": [
+    {
+      "recommend": "butter milk",
+      "confidence": 0.021,
+      "lift": 1.199
+    },
+    {
+      "recommend": "dessert",
+      "confidence": 0.025,
+      "lift": 1.072
+    },
+    {
+      "recommend": "cream cheese",
+      "confidence": 0.025,
+      "lift": 1.069
+    },
+    {
+      "recommend": "root vegetables",
+      "confidence": 0.07,
+      "lift": 1.009
+    }
+  ],
+  "pork": [
+    {
+      "recommend": "brown bread",
+      "confidence": 0.045,
+      "lift": 1.197
+    },
+    {
+      "recommend": "margarine",
+      "confidence": 0.036,
+      "lift": 1.119
+    }
+  ],
+  "domestic eggs": [
+    {
+      "recommend": "coffee",
+      "confidence": 0.038,
+      "lift": 1.197
+    },
+    {
+      "recommend": "white bread",
+      "confidence": 0.027,
+      "lift": 1.126
+    },
+    {
+      "recommend": "newspapers",
+      "confidence": 0.041,
+      "lift": 1.065
+    },
+    {
+      "recommend": "frankfurter",
+      "confidence": 0.038,
+      "lift": 1.002
+    }
+  ],
+  "fruit/vegetable juice": [
+    {
+      "recommend": "butter",
+      "confidence": 0.041,
+      "lift": 1.171
+    },
+    {
+      "recommend": "bottled beer",
+      "confidence": 0.049,
+      "lift": 1.084
+    },
+    {
+      "recommend": "rolls/buns",
+      "confidence": 0.11,
+      "lift": 1.0
+    }
+  ],
+  "red/blush wine": [
+    {
+      "recommend": "rolls/buns",
+      "confidence": 0.127,
+      "lift": 1.158
+    }
+  ],
+  "chocolate": [
+    {
+      "recommend": "pip fruit",
+      "confidence": 0.057,
+      "lift": 1.155
+    },
+    {
+      "recommend": "rolls/buns",
+      "confidence": 0.119,
+      "lift": 1.082
+    }
+  ],
+  "meat": [
+    {
+      "recommend": "root vegetables",
+      "confidence": 0.079,
+      "lift": 1.141
+    },
+    {
+      "recommend": "other vegetables",
+      "confidence": 0.127,
+      "lift": 1.04
+    }
+  ],
+  "salty snack": [
+    {
+      "recommend": "canned beer",
+      "confidence": 0.053,
+      "lift": 1.138
+    },
+    {
+      "recommend": "sausage",
+      "confidence": 0.06,
+      "lift": 1.002
+    }
+  ],
+  "misc. beverages": [
+    {
+      "recommend": "sausage",
+      "confidence": 0.068,
+      "lift": 1.123
+    }
+  ],
+  "cream cheese": [
+    {
+      "recommend": "frankfurter",
+      "confidence": 0.042,
+      "lift": 1.122
+    },
+    {
+      "recommend": "shopping bags",
+      "confidence": 0.051,
+      "lift": 1.069
+    }
+  ],
+  "other vegetables": [
+    {
+      "recommend": "frankfurter",
+      "confidence": 0.042,
+      "lift": 1.116
+    },
+    {
+      "recommend": "pot plants",
+      "confidence": 0.008,
+      "lift": 1.05
+    },
+    {
+      "recommend": "frozen meals",
+      "confidence": 0.018,
+      "lift": 1.044
+    },
+    {
+      "recommend": "meat",
+      "confidence": 0.018,
+      "lift": 1.04
+    },
+    {
+      "recommend": "berries",
+      "confidence": 0.022,
+      "lift": 1.005
+    }
+  ],
+  "whole milk": [
+    {
+      "recommend": "semi-finished bread",
+      "confidence": 0.011,
+      "lift": 1.115
+    },
+    {
+      "recommend": "detergent",
+      "confidence": 0.009,
+      "lift": 1.031
+    },
+    {
+      "recommend": "ham",
+      "confidence": 0.017,
+      "lift": 1.014
+    }
+  ],
+  "semi-finished bread": [
+    {
+      "recommend": "whole milk",
+      "confidence": 0.176,
+      "lift": 1.115
+    }
+  ],
+  "hamburger meat": [
+    {
+      "recommend": "bottled beer",
+      "confidence": 0.049,
+      "lift": 1.08
+    }
+  ],
+  "berries": [
+    {
+      "recommend": "pip fruit",
+      "confidence": 0.052,
+      "lift": 1.063
+    },
+    {
+      "recommend": "other vegetables",
+      "confidence": 0.123,
+      "lift": 1.005
+    }
+  ],
+  "uht-milk": [
+    {
+      "recommend": "tropical fruit",
+      "confidence": 0.072,
+      "lift": 1.061
+    }
+  ],
+  "hygiene articles": [
+    {
+      "recommend": "root vegetables",
+      "confidence": 0.073,
+      "lift": 1.052
+    }
+  ],
+  "pot plants": [
+    {
+      "recommend": "other vegetables",
+      "confidence": 0.128,
+      "lift": 1.05
+    }
+  ],
+  "ice cream": [
+    {
+      "recommend": "rolls/buns",
+      "confidence": 0.115,
+      "lift": 1.041
+    }
+  ],
+  "waffles": [
+    {
+      "recommend": "root vegetables",
+      "confidence": 0.072,
+      "lift": 1.038
+    }
+  ],
+  "ham": [
+    {
+      "recommend": "whole milk",
+      "confidence": 0.16,
+      "lift": 1.014
+    }
+  ],
+  "specialty bar": [
+    {
+      "recommend": "yogurt",
+      "confidence": 0.086,
+      "lift": 1.003
+    }
+  ]
+}

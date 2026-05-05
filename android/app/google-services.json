@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "665554379758",
+    "project_id": "cuocthi-khdl",
+    "storage_bucket": "cuocthi-khdl.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665554379758:android:9fca21cb44ac285f6ea4ff",
+        "android_client_info": {
+          "package_name": "com.example.khoahocdulieu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJTAMBEStczmZiYtfvFtKeqYNf3DPv6jQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

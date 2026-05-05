@@ -1,0 +1,317 @@
+{
+  "stats": {
+    "total_2014": 18277,
+    "total_2015": 20488,
+    "yoy_growth": 12.1,
+    "peak_month": 8,
+    "peak_month_name_vi": "Th8",
+    "peak_month_name_en": "Aug",
+    "peak_count": 3496
+  },
+  "trend_2014": [
+    1527,
+    1437,
+    1411,
+    1561,
+    1615,
+    1570,
+    1576,
+    1575,
+    1472,
+    1591,
+    1469,
+    1473
+  ],
+  "trend_2015": [
+    1797,
+    1560,
+    1722,
+    1699,
+    1793,
+    1694,
+    1724,
+    1921,
+    1587,
+    1670,
+    1785,
+    1536
+  ],
+  "avg_monthly": [
+    {
+      "month": 1,
+      "count": 3324
+    },
+    {
+      "month": 2,
+      "count": 2997
+    },
+    {
+      "month": 3,
+      "count": 3133
+    },
+    {
+      "month": 4,
+      "count": 3260
+    },
+    {
+      "month": 5,
+      "count": 3408
+    },
+    {
+      "month": 6,
+      "count": 3264
+    },
+    {
+      "month": 7,
+      "count": 3300
+    },
+    {
+      "month": 8,
+      "count": 3496
+    },
+    {
+      "month": 9,
+      "count": 3059
+    },
+    {
+      "month": 10,
+      "count": 3261
+    },
+    {
+      "month": 11,
+      "count": 3254
+    },
+    {
+      "month": 12,
+      "count": 3009
+    }
+  ],
+  "day_of_week": [
+    {
+      "day_index": 0,
+      "name_vi": "Thứ 2",
+      "name_en": "Mon",
+      "count": 5382
+    },
+    {
+      "day_index": 1,
+      "name_vi": "Thứ 3",
+      "name_en": "Tue",
+      "count": 5558
+    },
+    {
+      "day_index": 2,
+      "name_vi": "Thứ 4",
+      "name_en": "Wed",
+      "count": 5562
+    },
+    {
+      "day_index": 3,
+      "name_vi": "Thứ 5",
+      "name_en": "Thu",
+      "count": 5620
+    },
+    {
+      "day_index": 4,
+      "name_vi": "Thứ 6",
+      "name_en": "Fri",
+      "count": 5562
+    },
+    {
+      "day_index": 5,
+      "name_vi": "Thứ 7",
+      "name_en": "Sat",
+      "count": 5551
+    },
+    {
+      "day_index": 6,
+      "name_vi": "CN",
+      "name_en": "Sun",
+      "count": 5530
+    }
+  ],
+  "yoy_monthly": [
+    {
+      "month": 1,
+      "pct": 17.7
+    },
+    {
+      "month": 2,
+      "pct": 8.6
+    },
+    {
+      "month": 3,
+      "pct": 22.0
+    },
+    {
+      "month": 4,
+      "pct": 8.8
+    },
+    {
+      "month": 5,
+      "pct": 11.0
+    },
+    {
+      "month": 6,
+      "pct": 7.9
+    },
+    {
+      "month": 7,
+      "pct": 9.4
+    },
+    {
+      "month": 8,
+      "pct": 22.0
+    },
+    {
+      "month": 9,
+      "pct": 7.8
+    },
+    {
+      "month": 10,
+      "pct": 5.0
+    },
+    {
+      "month": 11,
+      "pct": 21.5
+    },
+    {
+      "month": 12,
+      "pct": 4.3
+    }
+  ],
+  "seasonal_products": {
+    "spring": {
+      "name_vi": "Mùa xuân",
+      "name_en": "Spring",
+      "products": [
+        {
+          "name": "whole milk",
+          "count": 650
+        },
+        {
+          "name": "other vegetables",
+          "count": 451
+        },
+        {
+          "name": "rolls/buns",
+          "count": 430
+        },
+        {
+          "name": "soda",
+          "count": 383
+        },
+        {
+          "name": "yogurt",
+          "count": 335
+        }
+      ]
+    },
+    "summer": {
+      "name_vi": "Mùa hè",
+      "name_en": "Summer",
+      "products": [
+        {
+          "name": "whole milk",
+          "count": 646
+        },
+        {
+          "name": "other vegetables",
+          "count": 507
+        },
+        {
+          "name": "rolls/buns",
+          "count": 410
+        },
+        {
+          "name": "soda",
+          "count": 390
+        },
+        {
+          "name": "yogurt",
+          "count": 358
+        }
+      ]
+    },
+    "autumn": {
+      "name_vi": "Mùa thu",
+      "name_en": "Autumn",
+      "products": [
+        {
+          "name": "whole milk",
+          "count": 636
+        },
+        {
+          "name": "other vegetables",
+          "count": 476
+        },
+        {
+          "name": "rolls/buns",
+          "count": 465
+        },
+        {
+          "name": "soda",
+          "count": 377
+        },
+        {
+          "name": "yogurt",
+          "count": 330
+        }
+      ]
+    },
+    "winter": {
+      "name_vi": "Mùa đông",
+      "name_en": "Winter",
+      "products": [
+        {
+          "name": "whole milk",
+          "count": 570
+        },
+        {
+          "name": "other vegetables",
+          "count": 464
+        },
+        {
+          "name": "rolls/buns",
+          "count": 411
+        },
+        {
+          "name": "soda",
+          "count": 364
+        },
+        {
+          "name": "yogurt",
+          "count": 311
+        }
+      ]
+    }
+  },
+  "month_names_vi": [
+    "Th1",
+    "Th2",
+    "Th3",
+    "Th4",
+    "Th5",
+    "Th6",
+    "Th7",
+    "Th8",
+    "Th9",
+    "Th10",
+    "Th11",
+    "Th12"
+  ],
+  "month_names_en": [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ]
+}

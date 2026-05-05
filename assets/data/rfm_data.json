@@ -1,0 +1,322 @@
+{
+  "segments": [
+    {
+      "name": "Khách hàng thân thiết",
+      "count": 1057,
+      "pct": 27.1
+    },
+    {
+      "name": "Khách hàng ngủ đông",
+      "count": 1017,
+      "pct": 26.1
+    },
+    {
+      "name": "Khách hàng khác",
+      "count": 500,
+      "pct": 12.8
+    },
+    {
+      "name": "Khách hàng tiềm năng",
+      "count": 485,
+      "pct": 12.4
+    },
+    {
+      "name": "Khách hàng rủi ro",
+      "count": 475,
+      "pct": 12.2
+    },
+    {
+      "name": "Khách hàng tinh hoa",
+      "count": 364,
+      "pct": 9.3
+    }
+  ],
+  "top_customers": [
+    {
+      "member_id": "1004",
+      "r": 5,
+      "f": 5,
+      "m": 5,
+      "score": "555",
+      "segment": "Khách hàng tinh hoa"
+    },
+    {
+      "member_id": "1038",
+      "r": 5,
+      "f": 5,
+      "m": 5,
+      "score": "555",
+      "segment": "Khách hàng tinh hoa"
+    },
+    {
+      "member_id": "1110",
+      "r": 5,
+      "f": 5,
+      "m": 5,
+      "score": "555",
+      "segment": "Khách hàng tinh hoa"
+    },
+    {
+      "member_id": "1116",
+      "r": 5,
+      "f": 5,
+      "m": 5,
+      "score": "555",
+      "segment": "Khách hàng tinh hoa"
+    },
+    {
+      "member_id": "1118",
+      "r": 5,
+      "f": 5,
+      "m": 5,
+      "score": "555",
+      "segment": "Khách hàng tinh hoa"
+    },
+    {
+      "member_id": "1153",
+      "r": 5,
+      "f": 5,
+      "m": 5,
+      "score": "555",
+      "segment": "Khách hàng tinh hoa"
+    },
+    {
+      "member_id": "1160",
+      "r": 5,
+      "f": 5,
+      "m": 5,
+      "score": "555",
+      "segment": "Khách hàng tinh hoa"
+    },
+    {
+      "member_id": "1170",
+      "r": 5,
+      "f": 5,
+      "m": 5,
+      "score": "555",
+      "segment": "Khách hàng tinh hoa"
+    },
+    {
+      "member_id": "1182",
+      "r": 5,
+      "f": 5,
+      "m": 5,
+      "score": "555",
+      "segment": "Khách hàng tinh hoa"
+    },
+    {
+      "member_id": "1197",
+      "r": 5,
+      "f": 5,
+      "m": 5,
+      "score": "555",
+      "segment": "Khách hàng tinh hoa"
+    },
+    {
+      "member_id": "1211",
+      "r": 2,
+      "f": 5,
+      "m": 5,
+      "score": "255",
+      "segment": "Khách hàng rủi ro"
+    },
+    {
+      "member_id": "1225",
+      "r": 2,
+      "f": 5,
+      "m": 5,
+      "score": "255",
+      "segment": "Khách hàng rủi ro"
+    },
+    {
+      "member_id": "1235",
+      "r": 2,
+      "f": 5,
+      "m": 5,
+      "score": "255",
+      "segment": "Khách hàng rủi ro"
+    },
+    {
+      "member_id": "1237",
+      "r": 2,
+      "f": 5,
+      "m": 5,
+      "score": "255",
+      "segment": "Khách hàng rủi ro"
+    },
+    {
+      "member_id": "1500",
+      "r": 2,
+      "f": 5,
+      "m": 5,
+      "score": "255",
+      "segment": "Khách hàng rủi ro"
+    },
+    {
+      "member_id": "1488",
+      "r": 5,
+      "f": 3,
+      "m": 2,
+      "score": "532",
+      "segment": "Khách hàng khác"
+    },
+    {
+      "member_id": "1508",
+      "r": 5,
+      "f": 3,
+      "m": 2,
+      "score": "532",
+      "segment": "Khách hàng khác"
+    },
+    {
+      "member_id": "1730",
+      "r": 5,
+      "f": 3,
+      "m": 2,
+      "score": "532",
+      "segment": "Khách hàng khác"
+    },
+    {
+      "member_id": "2076",
+      "r": 5,
+      "f": 3,
+      "m": 2,
+      "score": "532",
+      "segment": "Khách hàng khác"
+    },
+    {
+      "member_id": "2287",
+      "r": 5,
+      "f": 3,
+      "m": 2,
+      "score": "532",
+      "segment": "Khách hàng khác"
+    },
+    {
+      "member_id": "1206",
+      "r": 2,
+      "f": 2,
+      "m": 4,
+      "score": "224",
+      "segment": "Khách hàng ngủ đông"
+    },
+    {
+      "member_id": "1240",
+      "r": 2,
+      "f": 2,
+      "m": 4,
+      "score": "224",
+      "segment": "Khách hàng ngủ đông"
+    },
+    {
+      "member_id": "1305",
+      "r": 2,
+      "f": 2,
+      "m": 4,
+      "score": "224",
+      "segment": "Khách hàng ngủ đông"
+    },
+    {
+      "member_id": "1390",
+      "r": 2,
+      "f": 2,
+      "m": 4,
+      "score": "224",
+      "segment": "Khách hàng ngủ đông"
+    },
+    {
+      "member_id": "1703",
+      "r": 2,
+      "f": 2,
+      "m": 4,
+      "score": "224",
+      "segment": "Khách hàng ngủ đông"
+    },
+    {
+      "member_id": "3547",
+      "r": 5,
+      "f": 2,
+      "m": 5,
+      "score": "525",
+      "segment": "Khách hàng tiềm năng"
+    },
+    {
+      "member_id": "1011",
+      "r": 5,
+      "f": 2,
+      "m": 4,
+      "score": "524",
+      "segment": "Khách hàng tiềm năng"
+    },
+    {
+      "member_id": "1901",
+      "r": 5,
+      "f": 2,
+      "m": 4,
+      "score": "524",
+      "segment": "Khách hàng tiềm năng"
+    },
+    {
+      "member_id": "2054",
+      "r": 5,
+      "f": 2,
+      "m": 4,
+      "score": "524",
+      "segment": "Khách hàng tiềm năng"
+    },
+    {
+      "member_id": "2239",
+      "r": 5,
+      "f": 2,
+      "m": 4,
+      "score": "524",
+      "segment": "Khách hàng tiềm năng"
+    },
+    {
+      "member_id": "1125",
+      "r": 5,
+      "f": 4,
+      "m": 3,
+      "score": "543",
+      "segment": "Khách hàng thân thiết"
+    },
+    {
+      "member_id": "1208",
+      "r": 5,
+      "f": 4,
+      "m": 3,
+      "score": "543",
+      "segment": "Khách hàng thân thiết"
+    },
+    {
+      "member_id": "1282",
+      "r": 5,
+      "f": 4,
+      "m": 3,
+      "score": "543",
+      "segment": "Khách hàng thân thiết"
+    },
+    {
+      "member_id": "1380",
+      "r": 5,
+      "f": 4,
+      "m": 3,
+      "score": "543",
+      "segment": "Khách hàng thân thiết"
+    },
+    {
+      "member_id": "1491",
+      "r": 5,
+      "f": 4,
+      "m": 3,
+      "score": "543",
+      "segment": "Khách hàng thân thiết"
+    }
+  ],
+  "stats": {
+    "total_customers": 3898,
+    "champions_count": 364,
+    "at_risk_count": 475,
+    "avg_frequency": 3.8
+  }
+}
