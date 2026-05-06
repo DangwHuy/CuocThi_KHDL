@@ -1,0 +1,2227 @@
+{
+  "single": {
+    "curd": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.123,
+        "lift": 0.779,
+        "support": 0.0041,
+        "antecedents": [
+          "curd"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1052,
+        "lift": 0.861,
+        "support": 0.0035,
+        "antecedents": [
+          "curd"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0873,
+        "lift": 1.447,
+        "support": 0.0029,
+        "antecedents": [
+          "curd"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0833,
+        "lift": 0.858,
+        "support": 0.0028,
+        "antecedents": [
+          "curd"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0813,
+        "lift": 0.74,
+        "support": 0.0027,
+        "antecedents": [
+          "curd"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0675,
+        "lift": 0.786,
+        "support": 0.0023,
+        "antecedents": [
+          "curd"
+        ]
+      }
+    ],
+    "sausage": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1484,
+        "lift": 0.94,
+        "support": 0.009,
+        "antecedents": [
+          "sausage"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0997,
+        "lift": 0.816,
+        "support": 0.006,
+        "antecedents": [
+          "sausage"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0986,
+        "lift": 1.015,
+        "support": 0.0059,
+        "antecedents": [
+          "sausage"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0952,
+        "lift": 1.109,
+        "support": 0.0057,
+        "antecedents": [
+          "sausage"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0886,
+        "lift": 0.805,
+        "support": 0.0053,
+        "antecedents": [
+          "sausage"
+        ]
+      },
+      {
+        "recommend": "bottled beer",
+        "confidence": 0.0554,
+        "lift": 1.222,
+        "support": 0.0033,
+        "antecedents": [
+          "sausage"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0554,
+        "lift": 0.796,
+        "support": 0.0033,
+        "antecedents": [
+          "sausage"
+        ]
+      },
+      {
+        "recommend": "pastry",
+        "confidence": 0.0532,
+        "lift": 1.028,
+        "support": 0.0032,
+        "antecedents": [
+          "sausage"
+        ]
+      }
+    ],
+    "canned beer": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1282,
+        "lift": 0.812,
+        "support": 0.006,
+        "antecedents": [
+          "canned beer"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0897,
+        "lift": 0.816,
+        "support": 0.0042,
+        "antecedents": [
+          "canned beer"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0855,
+        "lift": 0.7,
+        "support": 0.004,
+        "antecedents": [
+          "canned beer"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0826,
+        "lift": 0.962,
+        "support": 0.0039,
+        "antecedents": [
+          "canned beer"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.067,
+        "lift": 0.689,
+        "support": 0.0031,
+        "antecedents": [
+          "canned beer"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0541,
+        "lift": 0.799,
+        "support": 0.0025,
+        "antecedents": [
+          "canned beer"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0527,
+        "lift": 0.873,
+        "support": 0.0025,
+        "antecedents": [
+          "canned beer"
+        ]
+      },
+      {
+        "recommend": "brown bread",
+        "confidence": 0.0513,
+        "lift": 1.363,
+        "support": 0.0024,
+        "antecedents": [
+          "canned beer"
+        ]
+      }
+    ],
+    "brown bread": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.119,
+        "lift": 0.754,
+        "support": 0.0045,
+        "antecedents": [
+          "brown bread"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0888,
+        "lift": 0.807,
+        "support": 0.0033,
+        "antecedents": [
+          "brown bread"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0817,
+        "lift": 0.669,
+        "support": 0.0031,
+        "antecedents": [
+          "brown bread"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0764,
+        "lift": 0.787,
+        "support": 0.0029,
+        "antecedents": [
+          "brown bread"
+        ]
+      },
+      {
+        "recommend": "canned beer",
+        "confidence": 0.0639,
+        "lift": 1.363,
+        "support": 0.0024,
+        "antecedents": [
+          "brown bread"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0622,
+        "lift": 0.724,
+        "support": 0.0023,
+        "antecedents": [
+          "brown bread"
+        ]
+      },
+      {
+        "recommend": "pastry",
+        "confidence": 0.0533,
+        "lift": 1.03,
+        "support": 0.002,
+        "antecedents": [
+          "brown bread"
+        ]
+      }
+    ],
+    "frozen vegetables": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.136,
+        "lift": 0.861,
+        "support": 0.0038,
+        "antecedents": [
+          "frozen vegetables"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1122,
+        "lift": 0.919,
+        "support": 0.0031,
+        "antecedents": [
+          "frozen vegetables"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0979,
+        "lift": 0.89,
+        "support": 0.0027,
+        "antecedents": [
+          "frozen vegetables"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0764,
+        "lift": 1.098,
+        "support": 0.0021,
+        "antecedents": [
+          "frozen vegetables"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.074,
+        "lift": 1.226,
+        "support": 0.0021,
+        "antecedents": [
+          "frozen vegetables"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.074,
+        "lift": 0.862,
+        "support": 0.0021,
+        "antecedents": [
+          "frozen vegetables"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0716,
+        "lift": 0.737,
+        "support": 0.002,
+        "antecedents": [
+          "frozen vegetables"
+        ]
+      }
+    ],
+    "bottled beer": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1578,
+        "lift": 0.999,
+        "support": 0.0072,
+        "antecedents": [
+          "bottled beer"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1032,
+        "lift": 0.846,
+        "support": 0.0047,
+        "antecedents": [
+          "bottled beer"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0885,
+        "lift": 0.804,
+        "support": 0.004,
+        "antecedents": [
+          "bottled beer"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0752,
+        "lift": 0.876,
+        "support": 0.0034,
+        "antecedents": [
+          "bottled beer"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0737,
+        "lift": 1.222,
+        "support": 0.0033,
+        "antecedents": [
+          "bottled beer"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0649,
+        "lift": 0.668,
+        "support": 0.0029,
+        "antecedents": [
+          "bottled beer"
+        ]
+      },
+      {
+        "recommend": "bottled water",
+        "confidence": 0.056,
+        "lift": 0.924,
+        "support": 0.0025,
+        "antecedents": [
+          "bottled beer"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.056,
+        "lift": 0.827,
+        "support": 0.0025,
+        "antecedents": [
+          "bottled beer"
+        ]
+      }
+    ],
+    "frankfurter": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1398,
+        "lift": 0.885,
+        "support": 0.0053,
+        "antecedents": [
+          "frankfurter"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1363,
+        "lift": 1.116,
+        "support": 0.0051,
+        "antecedents": [
+          "frankfurter"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0973,
+        "lift": 0.885,
+        "support": 0.0037,
+        "antecedents": [
+          "frankfurter"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0814,
+        "lift": 0.838,
+        "support": 0.0031,
+        "antecedents": [
+          "frankfurter"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0673,
+        "lift": 0.783,
+        "support": 0.0025,
+        "antecedents": [
+          "frankfurter"
+        ]
+      },
+      {
+        "recommend": "bottled water",
+        "confidence": 0.0584,
+        "lift": 0.962,
+        "support": 0.0022,
+        "antecedents": [
+          "frankfurter"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0584,
+        "lift": 0.84,
+        "support": 0.0022,
+        "antecedents": [
+          "frankfurter"
+        ]
+      }
+    ],
+    "other vegetables": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1215,
+        "lift": 0.769,
+        "support": 0.0148,
+        "antecedents": [
+          "other vegetables"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0865,
+        "lift": 0.786,
+        "support": 0.0106,
+        "antecedents": [
+          "other vegetables"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0794,
+        "lift": 0.817,
+        "support": 0.0097,
+        "antecedents": [
+          "other vegetables"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0662,
+        "lift": 0.771,
+        "support": 0.0081,
+        "antecedents": [
+          "other vegetables"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0515,
+        "lift": 0.759,
+        "support": 0.0063,
+        "antecedents": [
+          "other vegetables"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0493,
+        "lift": 0.816,
+        "support": 0.006,
+        "antecedents": [
+          "other vegetables"
+        ]
+      },
+      {
+        "recommend": "bottled water",
+        "confidence": 0.0449,
+        "lift": 0.74,
+        "support": 0.0055,
+        "antecedents": [
+          "other vegetables"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0432,
+        "lift": 0.622,
+        "support": 0.0053,
+        "antecedents": [
+          "other vegetables"
+        ]
+      }
+    ],
+    "yogurt": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.13,
+        "lift": 0.823,
+        "support": 0.0112,
+        "antecedents": [
+          "yogurt"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0942,
+        "lift": 0.771,
+        "support": 0.0081,
+        "antecedents": [
+          "yogurt"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0911,
+        "lift": 0.828,
+        "support": 0.0078,
+        "antecedents": [
+          "yogurt"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0677,
+        "lift": 0.697,
+        "support": 0.0058,
+        "antecedents": [
+          "yogurt"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0669,
+        "lift": 1.109,
+        "support": 0.0057,
+        "antecedents": [
+          "yogurt"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0607,
+        "lift": 0.896,
+        "support": 0.0052,
+        "antecedents": [
+          "yogurt"
+        ]
+      },
+      {
+        "recommend": "citrus fruit",
+        "confidence": 0.0537,
+        "lift": 1.011,
+        "support": 0.0046,
+        "antecedents": [
+          "yogurt"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0498,
+        "lift": 0.716,
+        "support": 0.0043,
+        "antecedents": [
+          "yogurt"
+        ]
+      }
+    ],
+    "root vegetables": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1085,
+        "lift": 0.687,
+        "support": 0.0076,
+        "antecedents": [
+          "root vegetables"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0826,
+        "lift": 0.751,
+        "support": 0.0057,
+        "antecedents": [
+          "root vegetables"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0759,
+        "lift": 0.782,
+        "support": 0.0053,
+        "antecedents": [
+          "root vegetables"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0759,
+        "lift": 0.622,
+        "support": 0.0053,
+        "antecedents": [
+          "root vegetables"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0615,
+        "lift": 0.716,
+        "support": 0.0043,
+        "antecedents": [
+          "root vegetables"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0528,
+        "lift": 0.78,
+        "support": 0.0037,
+        "antecedents": [
+          "root vegetables"
+        ]
+      },
+      {
+        "recommend": "bottled water",
+        "confidence": 0.05,
+        "lift": 0.823,
+        "support": 0.0035,
+        "antecedents": [
+          "root vegetables"
+        ]
+      },
+      {
+        "recommend": "shopping bags",
+        "confidence": 0.048,
+        "lift": 1.009,
+        "support": 0.0033,
+        "antecedents": [
+          "root vegetables"
+        ]
+      }
+    ],
+    "chocolate": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1246,
+        "lift": 0.789,
+        "support": 0.0029,
+        "antecedents": [
+          "chocolate"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.119,
+        "lift": 1.082,
+        "support": 0.0028,
+        "antecedents": [
+          "chocolate"
+        ]
+      }
+    ],
+    "frozen meals": [
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1275,
+        "lift": 1.044,
+        "support": 0.0021,
+        "antecedents": [
+          "frozen meals"
+        ]
+      }
+    ],
+    "meat": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.131,
+        "lift": 0.829,
+        "support": 0.0022,
+        "antecedents": [
+          "meat"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.127,
+        "lift": 1.04,
+        "support": 0.0021,
+        "antecedents": [
+          "meat"
+        ]
+      }
+    ],
+    "pastry": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1253,
+        "lift": 0.794,
+        "support": 0.0065,
+        "antecedents": [
+          "pastry"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0788,
+        "lift": 0.812,
+        "support": 0.0041,
+        "antecedents": [
+          "pastry"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0762,
+        "lift": 0.693,
+        "support": 0.0039,
+        "antecedents": [
+          "pastry"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0711,
+        "lift": 0.582,
+        "support": 0.0037,
+        "antecedents": [
+          "pastry"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0698,
+        "lift": 0.812,
+        "support": 0.0036,
+        "antecedents": [
+          "pastry"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.062,
+        "lift": 1.028,
+        "support": 0.0032,
+        "antecedents": [
+          "pastry"
+        ]
+      },
+      {
+        "recommend": "bottled water",
+        "confidence": 0.0556,
+        "lift": 0.916,
+        "support": 0.0029,
+        "antecedents": [
+          "pastry"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0556,
+        "lift": 0.799,
+        "support": 0.0029,
+        "antecedents": [
+          "pastry"
+        ]
+      }
+    ],
+    "soda": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1198,
+        "lift": 0.758,
+        "support": 0.0116,
+        "antecedents": [
+          "soda"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0998,
+        "lift": 0.817,
+        "support": 0.0097,
+        "antecedents": [
+          "soda"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0833,
+        "lift": 0.757,
+        "support": 0.0081,
+        "antecedents": [
+          "soda"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0613,
+        "lift": 1.015,
+        "support": 0.0059,
+        "antecedents": [
+          "soda"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0599,
+        "lift": 0.697,
+        "support": 0.0058,
+        "antecedents": [
+          "soda"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0557,
+        "lift": 0.823,
+        "support": 0.0054,
+        "antecedents": [
+          "soda"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0544,
+        "lift": 0.782,
+        "support": 0.0053,
+        "antecedents": [
+          "soda"
+        ]
+      },
+      {
+        "recommend": "bottled water",
+        "confidence": 0.0496,
+        "lift": 0.817,
+        "support": 0.0048,
+        "antecedents": [
+          "soda"
+        ]
+      }
+    ],
+    "ham": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1602,
+        "lift": 1.014,
+        "support": 0.0027,
+        "antecedents": [
+          "ham"
+        ]
+      }
+    ],
+    "citrus fruit": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1346,
+        "lift": 0.852,
+        "support": 0.0072,
+        "antecedents": [
+          "citrus fruit"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0906,
+        "lift": 0.742,
+        "support": 0.0048,
+        "antecedents": [
+          "citrus fruit"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0881,
+        "lift": 0.8,
+        "support": 0.0047,
+        "antecedents": [
+          "citrus fruit"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0868,
+        "lift": 1.011,
+        "support": 0.0046,
+        "antecedents": [
+          "citrus fruit"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0704,
+        "lift": 0.725,
+        "support": 0.0037,
+        "antecedents": [
+          "citrus fruit"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0541,
+        "lift": 0.798,
+        "support": 0.0029,
+        "antecedents": [
+          "citrus fruit"
+        ]
+      },
+      {
+        "recommend": "bottled water",
+        "confidence": 0.0491,
+        "lift": 0.808,
+        "support": 0.0026,
+        "antecedents": [
+          "citrus fruit"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0415,
+        "lift": 0.597,
+        "support": 0.0022,
+        "antecedents": [
+          "citrus fruit"
+        ]
+      }
+    ],
+    "shopping bags": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1334,
+        "lift": 0.845,
+        "support": 0.0063,
+        "antecedents": [
+          "shopping bags"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1039,
+        "lift": 0.851,
+        "support": 0.0049,
+        "antecedents": [
+          "shopping bags"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0997,
+        "lift": 0.906,
+        "support": 0.0047,
+        "antecedents": [
+          "shopping bags"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0927,
+        "lift": 0.955,
+        "support": 0.0044,
+        "antecedents": [
+          "shopping bags"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0744,
+        "lift": 0.867,
+        "support": 0.0035,
+        "antecedents": [
+          "shopping bags"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0702,
+        "lift": 1.009,
+        "support": 0.0033,
+        "antecedents": [
+          "shopping bags"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0576,
+        "lift": 0.85,
+        "support": 0.0027,
+        "antecedents": [
+          "shopping bags"
+        ]
+      },
+      {
+        "recommend": "bottled water",
+        "confidence": 0.0421,
+        "lift": 0.694,
+        "support": 0.002,
+        "antecedents": [
+          "shopping bags"
+        ]
+      }
+    ],
+    "berries": [
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1227,
+        "lift": 1.005,
+        "support": 0.0027,
+        "antecedents": [
+          "berries"
+        ]
+      },
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1043,
+        "lift": 0.66,
+        "support": 0.0023,
+        "antecedents": [
+          "berries"
+        ]
+      }
+    ],
+    "fruit/vegetable juice": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1297,
+        "lift": 0.821,
+        "support": 0.0044,
+        "antecedents": [
+          "fruit/vegetable juice"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.11,
+        "lift": 1.0,
+        "support": 0.0037,
+        "antecedents": [
+          "fruit/vegetable juice"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0864,
+        "lift": 0.708,
+        "support": 0.0029,
+        "antecedents": [
+          "fruit/vegetable juice"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0648,
+        "lift": 0.755,
+        "support": 0.0022,
+        "antecedents": [
+          "fruit/vegetable juice"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0629,
+        "lift": 0.928,
+        "support": 0.0021,
+        "antecedents": [
+          "fruit/vegetable juice"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0629,
+        "lift": 0.647,
+        "support": 0.0021,
+        "antecedents": [
+          "fruit/vegetable juice"
+        ]
+      }
+    ],
+    "rolls/buns": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.127,
+        "lift": 0.804,
+        "support": 0.014,
+        "antecedents": [
+          "rolls/buns"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.096,
+        "lift": 0.786,
+        "support": 0.0106,
+        "antecedents": [
+          "rolls/buns"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0735,
+        "lift": 0.757,
+        "support": 0.0081,
+        "antecedents": [
+          "rolls/buns"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0711,
+        "lift": 0.828,
+        "support": 0.0078,
+        "antecedents": [
+          "rolls/buns"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0553,
+        "lift": 0.816,
+        "support": 0.0061,
+        "antecedents": [
+          "rolls/buns"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0522,
+        "lift": 0.751,
+        "support": 0.0057,
+        "antecedents": [
+          "rolls/buns"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0486,
+        "lift": 0.805,
+        "support": 0.0053,
+        "antecedents": [
+          "rolls/buns"
+        ]
+      },
+      {
+        "recommend": "pip fruit",
+        "confidence": 0.045,
+        "lift": 0.916,
+        "support": 0.0049,
+        "antecedents": [
+          "rolls/buns"
+        ]
+      }
+    ],
+    "whole milk": [
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0939,
+        "lift": 0.769,
+        "support": 0.0148,
+        "antecedents": [
+          "whole milk"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0884,
+        "lift": 0.804,
+        "support": 0.014,
+        "antecedents": [
+          "whole milk"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0736,
+        "lift": 0.758,
+        "support": 0.0116,
+        "antecedents": [
+          "whole milk"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0707,
+        "lift": 0.823,
+        "support": 0.0112,
+        "antecedents": [
+          "whole milk"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0567,
+        "lift": 0.94,
+        "support": 0.009,
+        "antecedents": [
+          "whole milk"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0521,
+        "lift": 0.768,
+        "support": 0.0082,
+        "antecedents": [
+          "whole milk"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0478,
+        "lift": 0.687,
+        "support": 0.0076,
+        "antecedents": [
+          "whole milk"
+        ]
+      },
+      {
+        "recommend": "bottled beer",
+        "confidence": 0.0453,
+        "lift": 0.999,
+        "support": 0.0072,
+        "antecedents": [
+          "whole milk"
+        ]
+      }
+    ],
+    "newspapers": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1443,
+        "lift": 0.914,
+        "support": 0.0056,
+        "antecedents": [
+          "newspapers"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0945,
+        "lift": 0.774,
+        "support": 0.0037,
+        "antecedents": [
+          "newspapers"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0773,
+        "lift": 0.703,
+        "support": 0.003,
+        "antecedents": [
+          "newspapers"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0739,
+        "lift": 0.86,
+        "support": 0.0029,
+        "antecedents": [
+          "newspapers"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0653,
+        "lift": 0.938,
+        "support": 0.0025,
+        "antecedents": [
+          "newspapers"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0601,
+        "lift": 0.619,
+        "support": 0.0023,
+        "antecedents": [
+          "newspapers"
+        ]
+      },
+      {
+        "recommend": "pastry",
+        "confidence": 0.0515,
+        "lift": 0.996,
+        "support": 0.002,
+        "antecedents": [
+          "newspapers"
+        ]
+      }
+    ],
+    "pork": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1351,
+        "lift": 0.856,
+        "support": 0.005,
+        "antecedents": [
+          "pork"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1063,
+        "lift": 0.871,
+        "support": 0.0039,
+        "antecedents": [
+          "pork"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0919,
+        "lift": 0.835,
+        "support": 0.0034,
+        "antecedents": [
+          "pork"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0829,
+        "lift": 0.965,
+        "support": 0.0031,
+        "antecedents": [
+          "pork"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0811,
+        "lift": 0.835,
+        "support": 0.003,
+        "antecedents": [
+          "pork"
+        ]
+      }
+    ],
+    "bottled water": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1178,
+        "lift": 0.746,
+        "support": 0.0072,
+        "antecedents": [
+          "bottled water"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0903,
+        "lift": 0.74,
+        "support": 0.0055,
+        "antecedents": [
+          "bottled water"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0793,
+        "lift": 0.817,
+        "support": 0.0048,
+        "antecedents": [
+          "bottled water"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0771,
+        "lift": 0.701,
+        "support": 0.0047,
+        "antecedents": [
+          "bottled water"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0628,
+        "lift": 0.731,
+        "support": 0.0038,
+        "antecedents": [
+          "bottled water"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0584,
+        "lift": 0.861,
+        "support": 0.0035,
+        "antecedents": [
+          "bottled water"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0573,
+        "lift": 0.823,
+        "support": 0.0035,
+        "antecedents": [
+          "bottled water"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0518,
+        "lift": 0.858,
+        "support": 0.0031,
+        "antecedents": [
+          "bottled water"
+        ]
+      }
+    ],
+    "salty snack": [
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1174,
+        "lift": 0.962,
+        "support": 0.0022,
+        "antecedents": [
+          "salty snack"
+        ]
+      }
+    ],
+    "domestic eggs": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1423,
+        "lift": 0.901,
+        "support": 0.0053,
+        "antecedents": [
+          "domestic eggs"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0955,
+        "lift": 0.782,
+        "support": 0.0035,
+        "antecedents": [
+          "domestic eggs"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0919,
+        "lift": 0.835,
+        "support": 0.0034,
+        "antecedents": [
+          "domestic eggs"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0685,
+        "lift": 0.705,
+        "support": 0.0025,
+        "antecedents": [
+          "domestic eggs"
+        ]
+      },
+      {
+        "recommend": "bottled water",
+        "confidence": 0.0577,
+        "lift": 0.95,
+        "support": 0.0021,
+        "antecedents": [
+          "domestic eggs"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0577,
+        "lift": 0.851,
+        "support": 0.0021,
+        "antecedents": [
+          "domestic eggs"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0559,
+        "lift": 0.65,
+        "support": 0.0021,
+        "antecedents": [
+          "domestic eggs"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0541,
+        "lift": 0.777,
+        "support": 0.002,
+        "antecedents": [
+          "domestic eggs"
+        ]
+      }
+    ],
+    "candy": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1488,
+        "lift": 0.942,
+        "support": 0.0021,
+        "antecedents": [
+          "candy"
+        ]
+      }
+    ],
+    "chicken": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1223,
+        "lift": 0.774,
+        "support": 0.0034,
+        "antecedents": [
+          "chicken"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.1031,
+        "lift": 0.937,
+        "support": 0.0029,
+        "antecedents": [
+          "chicken"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0791,
+        "lift": 0.648,
+        "support": 0.0022,
+        "antecedents": [
+          "chicken"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0767,
+        "lift": 0.79,
+        "support": 0.0021,
+        "antecedents": [
+          "chicken"
+        ]
+      }
+    ],
+    "tropical fruit": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1213,
+        "lift": 0.768,
+        "support": 0.0082,
+        "antecedents": [
+          "tropical fruit"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0927,
+        "lift": 0.759,
+        "support": 0.0063,
+        "antecedents": [
+          "tropical fruit"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0897,
+        "lift": 0.816,
+        "support": 0.0061,
+        "antecedents": [
+          "tropical fruit"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0799,
+        "lift": 0.823,
+        "support": 0.0054,
+        "antecedents": [
+          "tropical fruit"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0769,
+        "lift": 0.896,
+        "support": 0.0052,
+        "antecedents": [
+          "tropical fruit"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0542,
+        "lift": 0.78,
+        "support": 0.0037,
+        "antecedents": [
+          "tropical fruit"
+        ]
+      },
+      {
+        "recommend": "bottled water",
+        "confidence": 0.0523,
+        "lift": 0.861,
+        "support": 0.0035,
+        "antecedents": [
+          "tropical fruit"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0454,
+        "lift": 0.752,
+        "support": 0.0031,
+        "antecedents": [
+          "tropical fruit"
+        ]
+      }
+    ],
+    "onions": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1452,
+        "lift": 0.92,
+        "support": 0.0029,
+        "antecedents": [
+          "onions"
+        ]
+      }
+    ],
+    "butter": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1328,
+        "lift": 0.841,
+        "support": 0.0047,
+        "antecedents": [
+          "butter"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0892,
+        "lift": 0.918,
+        "support": 0.0031,
+        "antecedents": [
+          "butter"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0816,
+        "lift": 0.742,
+        "support": 0.0029,
+        "antecedents": [
+          "butter"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0816,
+        "lift": 0.668,
+        "support": 0.0029,
+        "antecedents": [
+          "butter"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0626,
+        "lift": 0.729,
+        "support": 0.0022,
+        "antecedents": [
+          "butter"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0569,
+        "lift": 0.818,
+        "support": 0.002,
+        "antecedents": [
+          "butter"
+        ]
+      }
+    ],
+    "pip fruit": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1349,
+        "lift": 0.854,
+        "support": 0.0066,
+        "antecedents": [
+          "pip fruit"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.1008,
+        "lift": 0.916,
+        "support": 0.0049,
+        "antecedents": [
+          "pip fruit"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1008,
+        "lift": 0.826,
+        "support": 0.0049,
+        "antecedents": [
+          "pip fruit"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0804,
+        "lift": 0.828,
+        "support": 0.0039,
+        "antecedents": [
+          "pip fruit"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0736,
+        "lift": 0.857,
+        "support": 0.0036,
+        "antecedents": [
+          "pip fruit"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0545,
+        "lift": 0.783,
+        "support": 0.0027,
+        "antecedents": [
+          "pip fruit"
+        ]
+      },
+      {
+        "recommend": "pastry",
+        "confidence": 0.045,
+        "lift": 0.869,
+        "support": 0.0022,
+        "antecedents": [
+          "pip fruit"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0436,
+        "lift": 0.722,
+        "support": 0.0021,
+        "antecedents": [
+          "pip fruit"
+        ]
+      }
+    ],
+    "coffee": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1205,
+        "lift": 0.763,
+        "support": 0.0038,
+        "antecedents": [
+          "coffee"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0825,
+        "lift": 0.675,
+        "support": 0.0026,
+        "antecedents": [
+          "coffee"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0782,
+        "lift": 0.806,
+        "support": 0.0025,
+        "antecedents": [
+          "coffee"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0761,
+        "lift": 0.692,
+        "support": 0.0024,
+        "antecedents": [
+          "coffee"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0655,
+        "lift": 0.763,
+        "support": 0.0021,
+        "antecedents": [
+          "coffee"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0634,
+        "lift": 0.912,
+        "support": 0.002,
+        "antecedents": [
+          "coffee"
+        ]
+      }
+    ],
+    "whipped/sour cream": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1055,
+        "lift": 0.668,
+        "support": 0.0046,
+        "antecedents": [
+          "whipped/sour cream"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0948,
+        "lift": 0.776,
+        "support": 0.0041,
+        "antecedents": [
+          "whipped/sour cream"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.078,
+        "lift": 0.803,
+        "support": 0.0034,
+        "antecedents": [
+          "whipped/sour cream"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0673,
+        "lift": 0.783,
+        "support": 0.0029,
+        "antecedents": [
+          "whipped/sour cream"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0673,
+        "lift": 0.612,
+        "support": 0.0029,
+        "antecedents": [
+          "whipped/sour cream"
+        ]
+      },
+      {
+        "recommend": "tropical fruit",
+        "confidence": 0.0566,
+        "lift": 0.835,
+        "support": 0.0025,
+        "antecedents": [
+          "whipped/sour cream"
+        ]
+      },
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.0566,
+        "lift": 0.813,
+        "support": 0.0025,
+        "antecedents": [
+          "whipped/sour cream"
+        ]
+      },
+      {
+        "recommend": "sausage",
+        "confidence": 0.0489,
+        "lift": 0.811,
+        "support": 0.0021,
+        "antecedents": [
+          "whipped/sour cream"
+        ]
+      }
+    ],
+    "waffles": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1408,
+        "lift": 0.892,
+        "support": 0.0026,
+        "antecedents": [
+          "waffles"
+        ]
+      }
+    ],
+    "hamburger meat": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1407,
+        "lift": 0.891,
+        "support": 0.0031,
+        "antecedents": [
+          "hamburger meat"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1009,
+        "lift": 0.827,
+        "support": 0.0022,
+        "antecedents": [
+          "hamburger meat"
+        ]
+      }
+    ],
+    "white bread": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1309,
+        "lift": 0.829,
+        "support": 0.0031,
+        "antecedents": [
+          "white bread"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1086,
+        "lift": 0.89,
+        "support": 0.0026,
+        "antecedents": [
+          "white bread"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0891,
+        "lift": 0.81,
+        "support": 0.0021,
+        "antecedents": [
+          "white bread"
+        ]
+      }
+    ],
+    "sugar": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1396,
+        "lift": 0.884,
+        "support": 0.0025,
+        "antecedents": [
+          "sugar"
+        ]
+      }
+    ],
+    "beef": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1378,
+        "lift": 0.873,
+        "support": 0.0047,
+        "antecedents": [
+          "beef"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0827,
+        "lift": 0.677,
+        "support": 0.0028,
+        "antecedents": [
+          "beef"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.065,
+        "lift": 0.756,
+        "support": 0.0022,
+        "antecedents": [
+          "beef"
+        ]
+      }
+    ],
+    "long life bakery product": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1343,
+        "lift": 0.851,
+        "support": 0.0024,
+        "antecedents": [
+          "long life bakery product"
+        ]
+      }
+    ],
+    "margarine": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1266,
+        "lift": 0.801,
+        "support": 0.0041,
+        "antecedents": [
+          "margarine"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0996,
+        "lift": 0.816,
+        "support": 0.0032,
+        "antecedents": [
+          "margarine"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.0934,
+        "lift": 0.849,
+        "support": 0.003,
+        "antecedents": [
+          "margarine"
+        ]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.0809,
+        "lift": 0.833,
+        "support": 0.0026,
+        "antecedents": [
+          "margarine"
+        ]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.0664,
+        "lift": 0.773,
+        "support": 0.0021,
+        "antecedents": [
+          "margarine"
+        ]
+      }
+    ],
+    "UHT-milk": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1188,
+        "lift": 0.752,
+        "support": 0.0025,
+        "antecedents": [
+          "UHT-milk"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.1,
+        "lift": 0.819,
+        "support": 0.0021,
+        "antecedents": [
+          "UHT-milk"
+        ]
+      }
+    ],
+    "napkins": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1088,
+        "lift": 0.689,
+        "support": 0.0024,
+        "antecedents": [
+          "napkins"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0967,
+        "lift": 0.792,
+        "support": 0.0021,
+        "antecedents": [
+          "napkins"
+        ]
+      }
+    ],
+    "dessert": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.102,
+        "lift": 0.646,
+        "support": 0.0024,
+        "antecedents": [
+          "dessert"
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0878,
+        "lift": 0.719,
+        "support": 0.0021,
+        "antecedents": [
+          "dessert"
+        ]
+      },
+      {
+        "recommend": "rolls/buns",
+        "confidence": 0.085,
+        "lift": 0.773,
+        "support": 0.002,
+        "antecedents": [
+          "dessert"
+        ]
+      }
+    ],
+    "cream cheese ": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.1215,
+        "lift": 0.769,
+        "support": 0.0029,
+        "antecedents": [
+          "cream cheese "
+        ]
+      },
+      {
+        "recommend": "other vegetables",
+        "confidence": 0.0904,
+        "lift": 0.74,
+        "support": 0.0021,
+        "antecedents": [
+          "cream cheese "
+        ]
+      }
+    ]
+  },
+  "multi": {
+    "rolls/buns|sausage": [
+      {
+        "recommend": "whole milk",
+        "confidence": 0.25,
+        "lift": 1.5,
+        "support": 0.005,
+        "antecedents": ["rolls/buns", "sausage"]
+      },
+      {
+        "recommend": "soda",
+        "confidence": 0.18,
+        "lift": 1.2,
+        "support": 0.003,
+        "antecedents": ["rolls/buns", "sausage"]
+      }
+    ],
+    "other vegetables|whole milk": [
+      {
+        "recommend": "root vegetables",
+        "confidence": 0.23,
+        "lift": 2.1,
+        "support": 0.01,
+        "antecedents": ["other vegetables", "whole milk"]
+      },
+      {
+        "recommend": "yogurt",
+        "confidence": 0.19,
+        "lift": 1.6,
+        "support": 0.008,
+        "antecedents": ["other vegetables", "whole milk"]
+      }
+    ]
+  }
+}

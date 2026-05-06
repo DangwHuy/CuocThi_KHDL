@@ -153,4 +153,38 @@ class DataService {
     
     return dictionary[item.toLowerCase()] ?? item;
   }
+
+  static double getMockPrice(String item) {
+    final predefined = {
+      'whole milk': 1.5,
+      'other vegetables': 2.0,
+      'rolls/buns': 1.0,
+      'soda': 1.2,
+      'yogurt': 1.8,
+      'bottled water': 0.8,
+      'sausage': 3.5,
+      'tropical fruit': 2.5,
+      'root vegetables': 2.2,
+      'beef': 5.0,
+      'pork': 4.0,
+      'chicken': 3.8,
+    };
+    if (predefined.containsKey(item.toLowerCase())) {
+      return predefined[item.toLowerCase()]!;
+    }
+    // Generate a consistent pseudo-random price between $0.50 and $9.50
+    final hash = item.hashCode.abs();
+    final price = 0.5 + (hash % 90) / 10.0;
+    return price;
+  }
+
+  static String formatPrice(double priceInUSD, bool isVi) {
+    if (isVi) {
+      final vnd = (priceInUSD * 25000).round();
+      final str = vnd.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.');
+      return '$str ₫';
+    } else {
+      return '\$${priceInUSD.toStringAsFixed(2)}';
+    }
+  }
 }
