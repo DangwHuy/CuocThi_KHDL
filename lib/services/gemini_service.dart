@@ -13,7 +13,7 @@ class GeminiResponse {
 class GeminiService {
   static const String _apiKey = String.fromEnvironment(
     'GEMINI_API_KEY', 
-    defaultValue: 'AIzaSyB58IFoPoCTtVjHH2DMDXGuA00nzAqzCrk' // WARNING: Xóa chuỗi này trước khi push lên GitHub!
+    defaultValue: '' // WARNING: Xóa chuỗi này trước khi push lên GitHub!
   );
   static const String _model = 'gemini-2.0-flash';
   
@@ -28,7 +28,7 @@ class GeminiService {
     required String dataContext,
   }) async {
     final systemPrompt = '''
-Bạn là AI analyst chuyên nghiệp cho hệ thống phân tích bán lẻ DaklakAgent.
+Bạn là AI analyst chuyên nghiệp cho hệ thống phân tích bán lẻ và giao dịch.
 Dưới đây là dữ liệu thực tế từ hệ thống của cửa hàng:
 
 $dataContext
