@@ -81,7 +81,7 @@ class DataService {
     
     var counts = <String, int>{};
     for (var item in items) {
-      final translatedItem = translateItem(item);
+      final translatedItem = translateItem(item, true); // Keep internal counts consistently in Vietnamese for legacy reasons or just use original
       counts[translatedItem] = (counts[translatedItem] ?? 0) + 1;
     }
     
@@ -91,7 +91,9 @@ class DataService {
     return Map.fromEntries(sortedEntries.take(10));
   }
 
-  static String translateItem(String item) {
+  static String translateItem(String item, [bool isVi = true]) {
+    if (!isVi) return item; // Return original English name if not Vietnamese
+    
     const dictionary = {
       'whole milk': 'Sữa tươi',
       'other vegetables': 'Rau củ khác',

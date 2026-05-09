@@ -18,6 +18,7 @@ import 'forecast_screen.dart';
 import 'pipeline_screen.dart';
 import 'realtime_screen.dart';
 import 'nlp_screen.dart';
+import 'agent_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -70,85 +71,142 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: Row(
         children: [
           if (!isMobile)
-            NavigationRail(
-              backgroundColor: Theme.of(context).cardColor,
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: (index) =>
-                  setState(() => _selectedIndex = index),
-              labelType: NavigationRailLabelType.all,
-              destinations: [
-                NavigationRailDestination(
-                  icon: const Icon(Icons.dashboard_outlined),
-                  selectedIcon: const Icon(Icons.dashboard_rounded),
-                  label: Text(settings.isVietnamese ? 'Tổng quan' : 'Overview'),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isExtended = MediaQuery.of(context).size.width > 1200;
+                return Container(
+                  width: isExtended ? 240 : 80,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(2, 0),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // Header
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: isExtended 
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.analytics_rounded, color: AppTheme.primaryColor, size: 32),
+                                const SizedBox(width: 12),
+                                const Text('Hệ Thống KHDL', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                              ],
+                            )
+                          : const Icon(Icons.analytics_rounded, color: AppTheme.primaryColor, size: 32),
+                      ),
+                      
+                      // Main Navigation Items (Scrollable)
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: IntrinsicHeight(
+                            child: NavigationRail(
+                              backgroundColor: Colors.transparent,
+                              extended: isExtended,
+                              selectedIndex: _selectedIndex == 14 ? null : _selectedIndex,
+                              onDestinationSelected: (index) => setState(() => _selectedIndex = index),
+                              labelType: isExtended ? NavigationRailLabelType.none : NavigationRailLabelType.all,
+                              destinations: [
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.dashboard_outlined),
+                        selectedIcon: const Icon(Icons.dashboard_rounded),
+                        label: Text(settings.isVietnamese ? 'Tổng quan' : 'Overview'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.auto_awesome_outlined),
+                        selectedIcon: const Icon(Icons.auto_awesome_rounded),
+                        label: Text(settings.isVietnamese ? 'AI Gợi ý' : 'AI Recs'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.compare_arrows_outlined),
+                        selectedIcon: const Icon(Icons.compare_arrows_rounded),
+                        label: Text(settings.isVietnamese ? 'So sánh' : 'Compare'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.table_rows_outlined),
+                        selectedIcon: const Icon(Icons.table_rows_rounded),
+                        label: Text(settings.isVietnamese ? 'Dữ liệu' : 'Data'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.people_alt_outlined),
+                        selectedIcon: const Icon(Icons.people_alt_rounded),
+                        label: Text(settings.isVietnamese ? 'RFM' : 'RFM'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.insights_outlined),
+                        selectedIcon: const Icon(Icons.insights_rounded),
+                        label: Text(settings.isVietnamese ? 'Mùa vụ' : 'Season'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.hub_outlined),
+                        selectedIcon: const Icon(Icons.hub_rounded),
+                        label: Text(settings.isVietnamese ? 'Phân cụm' : 'Cluster'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.category_outlined),
+                        selectedIcon: const Icon(Icons.category_rounded),
+                        label: Text(settings.isVietnamese ? 'Danh mục' : 'Category'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.bug_report_outlined),
+                        selectedIcon: const Icon(Icons.bug_report_rounded),
+                        label: Text(settings.isVietnamese ? 'Bất thường' : 'Anomaly'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.trending_up_outlined),
+                        selectedIcon: const Icon(Icons.trending_up_rounded),
+                        label: Text(settings.isVietnamese ? 'Dự báo' : 'Forecast'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.schema_outlined),
+                        selectedIcon: const Icon(Icons.schema_rounded),
+                        label: Text(settings.isVietnamese ? 'Kiến trúc' : 'Pipeline'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.stream_outlined),
+                        selectedIcon: const Icon(Icons.stream_rounded),
+                        label: Text(settings.isVietnamese ? 'Live' : 'Live'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.psychology_outlined),
+                        selectedIcon: const Icon(Icons.psychology_rounded),
+                        label: Text(settings.isVietnamese ? 'NLP' : 'NLP'),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.smart_toy_outlined),
+                        selectedIcon: const Icon(Icons.smart_toy_rounded),
+                        label: Text(settings.isVietnamese ? 'AI Agent' : 'AI Agent'),
+                      ),
+                      ],
+                    ),
+                  ),
                 ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.auto_awesome_outlined),
-                  selectedIcon: const Icon(Icons.auto_awesome_rounded),
-                  label: Text(settings.isVietnamese ? 'AI Gợi ý' : 'AI Recs'),
-                ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.compare_arrows_outlined),
-                  selectedIcon: const Icon(Icons.compare_arrows_rounded),
-                  label: Text(settings.isVietnamese ? 'So sánh' : 'Compare'),
-                ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.table_rows_outlined),
-                  selectedIcon: const Icon(Icons.table_rows_rounded),
-                  label: Text(settings.isVietnamese ? 'Dữ liệu' : 'Data'),
-                ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.people_alt_outlined),
-                  selectedIcon: const Icon(Icons.people_alt_rounded),
-                  label: Text(settings.isVietnamese ? 'RFM' : 'RFM'),
-                ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.insights_outlined),
-                  selectedIcon: const Icon(Icons.insights_rounded),
-                  label: Text(settings.isVietnamese ? 'Mùa vụ' : 'Season'),
-                ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.hub_outlined),
-                  selectedIcon: const Icon(Icons.hub_rounded),
-                  label: Text(settings.isVietnamese ? 'Phân cụm' : 'Cluster'),
-                ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.category_outlined),
-                  selectedIcon: const Icon(Icons.category_rounded),
-                  label: Text(settings.isVietnamese ? 'Danh mục' : 'Category'),
-                ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.bug_report_outlined),
-                  selectedIcon: const Icon(Icons.bug_report_rounded),
-                  label: Text(settings.isVietnamese ? 'Bất thường' : 'Anomaly'),
-                ),
-                NavigationRailDestination(
+              ),
+              
+              const Divider(height: 1, color: Colors.white10, indent: 10, endIndent: 10),
+              
+              // Settings at bottom
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: NavigationRailDestination(
                   icon: const Icon(Icons.settings_outlined),
                   selectedIcon: const Icon(Icons.settings_rounded),
                   label: Text(settings.isVietnamese ? 'Cài đặt' : 'Settings'),
-                ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.trending_up_outlined),
-                  selectedIcon: const Icon(Icons.trending_up_rounded),
-                  label: Text(settings.isVietnamese ? 'Dự báo' : 'Forecast'),
-                ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.schema_outlined),
-                  selectedIcon: const Icon(Icons.schema_rounded),
-                  label: Text(settings.isVietnamese ? 'Kiến trúc' : 'Pipeline'),
-                ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.stream_outlined),
-                  selectedIcon: const Icon(Icons.stream_rounded),
-                  label: Text(settings.isVietnamese ? 'Live' : 'Live'),
-                ),
-                NavigationRailDestination(
-                  icon: const Icon(Icons.psychology_outlined),
-                  selectedIcon: const Icon(Icons.psychology_rounded),
-                  label: Text(settings.isVietnamese ? 'NLP' : 'NLP'),
-                ),
-              ],
-            ),
+                ).toRailDestination(context, 14, _selectedIndex, (idx) => setState(() => _selectedIndex = 14), isExtended),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    ),
           Expanded(
             child: IndexedStack(
               index: _selectedIndex,
@@ -162,11 +220,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const ClusteringScreen(),
                 const CategoryScreen(),
                 const AnomalyScreen(),
-                const SettingsScreen(),
                 const ForecastScreen(),
                 const PipelineScreen(),
                 const RealtimeScreen(),
                 const NLPScreen(),
+                const AgentScreen(),
+                const SettingsScreen(),
               ],
             ),
           ),
@@ -205,7 +264,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           BottomNavigationBarItem(
               icon: const Icon(Icons.auto_awesome_outlined),
               activeIcon: const Icon(Icons.auto_awesome_rounded),
-              label: 'AI'),
+              label: 'B.Chéo'),
           BottomNavigationBarItem(
               icon: const Icon(Icons.people_alt_outlined),
               activeIcon: const Icon(Icons.people_alt_rounded),
@@ -235,11 +294,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       {'icon': Icons.hub_rounded, 'label': settings.isVietnamese ? 'Phân cụm Khách hàng' : 'Clustering', 'index': 6},
       {'icon': Icons.category_rounded, 'label': settings.isVietnamese ? 'Phân tích Danh mục' : 'Category', 'index': 7},
       {'icon': Icons.bug_report_rounded, 'label': settings.isVietnamese ? 'Phát hiện Bất thường' : 'Anomaly', 'index': 8},
-      {'icon': Icons.settings_rounded, 'label': settings.isVietnamese ? 'Cài đặt hệ thống' : 'Settings', 'index': 9},
-      {'icon': Icons.trending_up_rounded, 'label': settings.isVietnamese ? 'Dự báo Doanh thu' : 'Forecast', 'index': 10},
-      {'icon': Icons.schema_rounded, 'label': settings.isVietnamese ? 'Kiến trúc Dữ liệu' : 'Data Pipeline', 'index': 11},
-      {'icon': Icons.stream_rounded, 'label': settings.isVietnamese ? 'Thời gian thực' : 'Real-time Analytics', 'index': 12},
-      {'icon': Icons.psychology_rounded, 'label': settings.isVietnamese ? 'Phân tích Cảm xúc' : 'NLP Sentiment', 'index': 13},
+      {'icon': Icons.trending_up_rounded, 'label': settings.isVietnamese ? 'Dự báo Doanh thu' : 'Forecast', 'index': 9},
+      {'icon': Icons.schema_rounded, 'label': settings.isVietnamese ? 'Kiến trúc Dữ liệu' : 'Data Pipeline', 'index': 10},
+      {'icon': Icons.stream_rounded, 'label': settings.isVietnamese ? 'Thời gian thực' : 'Real-time Analytics', 'index': 11},
+      {'icon': Icons.psychology_rounded, 'label': settings.isVietnamese ? 'Phân tích Cảm xúc' : 'NLP Sentiment', 'index': 12},
+      {'icon': Icons.smart_toy_rounded, 'label': settings.isVietnamese ? 'Trợ lý AI Agent' : 'AI Agent Chat', 'index': 13},
     ];
 
     return Drawer(
@@ -292,9 +351,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
               },
             ),
           ),
-          const Divider(),
+          const Divider(height: 1, color: Colors.white10),
+          ListTile(
+            leading: Icon(Icons.settings_rounded, 
+                color: _selectedIndex == 14 ? AppTheme.primaryColor : Colors.grey),
+            title: Text(
+              settings.isVietnamese ? 'Cài đặt hệ thống' : 'System Settings',
+              style: TextStyle(
+                color: _selectedIndex == 14 ? AppTheme.primaryColor : Colors.grey.shade400,
+                fontWeight: _selectedIndex == 14 ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+            selected: _selectedIndex == 14,
+            onTap: () {
+              setState(() => _selectedIndex = 14);
+              Navigator.pop(context);
+            },
+          ),
+          const SizedBox(height: 10),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(bottom: 20),
             child: Text('Version 1.0.0',
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
           ),
@@ -379,7 +455,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               _buildSummaryCard(
                 settings.isVietnamese ? 'Bán chạy' : 'Top Item',
-                DataService.translateItem(topItems.keys.first),
+                DataService.translateItem(topItems.keys.first, settings.isVietnamese),
                 subtitle: '${topItems.values.first} ${settings.isVietnamese ? "lần" : "times"}',
                 icon: Icons.trending_up_rounded,
                 color: const Color(0xFF1D9E75),
@@ -771,7 +847,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     Text(
                                       settings.isVietnamese
                                           ? '${e.key} món'
-                                          : '${e.key} item${int.parse(e.key) > 1 ? "s" : ""}',
+                                          : '${e.key} item${(int.tryParse(e.key) ?? 2) > 1 ? "s" : ""}',
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: isSelected
@@ -1175,6 +1251,50 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+extension on NavigationRailDestination {
+  Widget toRailDestination(BuildContext context, int index, int selectedIndex, Function(int) onTap, bool isExtended) {
+    final isSelected = index == selectedIndex;
+    final color = isSelected ? AppTheme.primaryColor : Colors.grey;
+    
+    return InkWell(
+      onTap: () => onTap(index),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: isExtended ? 16 : 0),
+        child: isExtended 
+          ? Row(
+              children: [
+                IconTheme(
+                  data: IconThemeData(color: color, size: 24),
+                  child: isSelected ? (selectedIcon ?? icon) : icon,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: DefaultTextStyle(
+                    style: TextStyle(color: color, fontSize: 13, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+                    child: label,
+                  ),
+                ),
+              ],
+            )
+          : Column(
+              children: [
+                IconTheme(
+                  data: IconThemeData(color: color, size: 24),
+                  child: isSelected ? (selectedIcon ?? icon) : icon,
+                ),
+                const SizedBox(height: 4),
+                DefaultTextStyle(
+                  style: TextStyle(color: color, fontSize: 11, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+                  child: label,
+                ),
+              ],
+            ),
       ),
     );
   }
