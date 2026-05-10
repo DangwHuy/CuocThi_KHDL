@@ -1,5 +1,12 @@
+import 'dart:io';
+import 'dart:convert';
+import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../models/chat_message.dart';
 import '../services/ai_context_service.dart';
 import '../services/gemini_service.dart';
@@ -17,21 +24,56 @@ class AgentScreen extends StatefulWidget {
   State<AgentScreen> createState() => _AgentScreenState();
 }
 
-class _AgentScreenState extends State<AgentScreen> {
+class _AgentScreenState extends State<AgentScreen>
+    with TickerProviderStateMixin {
   final List<ChatMessage> _messages = [];
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final GeminiService _geminiService = GeminiService();
   final ChatStorageService _storageService = ChatStorageService();
   bool _isTyping = false;
-  
+  XFile? _selectedImage;
+  bool _inputFocused = false;
+
   ChartConfig? _currentChart;
   final List<ChartConfig> _chartHistory = [];
+  final FocusNode _focusNode = FocusNode();
+
+  // Shimmer / pulse animation for typing dots
+  late AnimationController _dotController;
+  late AnimationController _headerGlowController;
+  late Animation<double> _headerGlowAnimation;
 
   @override
   void initState() {
     super.initState();
     _loadHistoryFromFirestore();
+
+    _dotController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+
+    _headerGlowController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat(reverse: true);
+
+    _headerGlowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _headerGlowController, curve: Curves.easeInOut),
+    );
+
+    _focusNode.addListener(() {
+      setState(() => _inputFocused = _focusNode.hasFocus);
+    });
+  }
+
+  @override
+  void dispose() {
+    _dotController.dispose();
+    _headerGlowController.dispose();
+    _focusNode.dispose();
+    super.dispose();
   }
 
   Future<void> _loadHistoryFromFirestore() async {
@@ -42,17 +84,14 @@ class _AgentScreenState extends State<AgentScreen> {
           _addSystemMessage();
         } else {
           _messages.addAll(history);
-          // Khôi phục biểu đồ mới nhất từ lịch sử
           for (var msg in history.reversed) {
             if (msg.chartConfig != null) {
               _currentChart = msg.chartConfig;
               break;
             }
           }
-          // Khôi phục danh sách history biểu đồ
-          _chartHistory.addAll(history
-              .where((m) => m.chartConfig != null)
-              .map((m) => m.chartConfig!));
+          _chartHistory.addAll(
+              history.where((m) => m.chartConfig != null).map((m) => m.chartConfig!));
         }
       });
       _scrollToBottom();
@@ -62,7 +101,8 @@ class _AgentScreenState extends State<AgentScreen> {
   void _addSystemMessage() {
     final msg = ChatMessage(
       id: DateTime.now().toString(),
-      content: 'Xin chào! Tôi là trợ lý phân tích dữ liệu chuyên sâu (Data Analyst). Tôi đã sẵn sàng phân tích, dự báo (what-if) và tự động tạo báo cáo từ dữ liệu của bạn.',
+      content:
+      'Xin chào! Tôi là trợ lý phân tích dữ liệu chuyên sâu (Data Analyst). Tôi đã sẵn sàng phân tích, dự báo (what-if) và tự động tạo báo cáo từ dữ liệu của bạn.',
       role: MessageRole.assistant,
       timestamp: DateTime.now(),
       quickReplySuggestions: [
@@ -72,11 +112,7 @@ class _AgentScreenState extends State<AgentScreen> {
         'Nguyên nhân sụt giảm giao dịch tháng 12?'
       ],
     );
-    if (mounted) {
-      setState(() {
-        _messages.add(msg);
-      });
-    }
+    if (mounted) setState(() => _messages.add(msg));
   }
 
   void _scrollToBottom() {
@@ -84,8 +120,8 @@ class _AgentScreenState extends State<AgentScreen> {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOutCubic,
         );
       }
     });
@@ -94,27 +130,45 @@ class _AgentScreenState extends State<AgentScreen> {
   Future<void> _handleSend() async {
     final text = _controller.text.trim();
     if (text.isEmpty || _isTyping) return;
-
     _controller.clear();
-    final userMsg = ChatMessage(
-      id: DateTime.now().toString(),
-      content: text,
-      role: MessageRole.user,
-      timestamp: DateTime.now(),
-    );
-
-    setState(() {
-      _messages.add(userMsg);
-      _isTyping = true;
-    });
     _scrollToBottom();
-    _storageService.saveMessage(userMsg); // Lưu tin nhắn User vào Firestore
 
     try {
+      String? base64Image;
+      String? imageUrl;
+
+      if (_selectedImage != null) {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('chat_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+        final bytes = await _selectedImage!.readAsBytes();
+        await storageRef.putData(bytes, SettableMetadata(contentType: 'image/jpeg'));
+        imageUrl = await storageRef.getDownloadURL();
+        base64Image = base64Encode(bytes);
+      }
+
+      final userMsg = ChatMessage(
+        id: DateTime.now().toString(),
+        content: text,
+        role: MessageRole.user,
+        timestamp: DateTime.now(),
+        imageUrl: imageUrl,
+        localImagePath: _selectedImage?.path,
+      );
+
+      setState(() {
+        _messages.add(userMsg);
+        _isTyping = true;
+        _selectedImage = null;
+      });
+      _scrollToBottom();
+      _storageService.saveMessage(userMsg);
+
       final dataContext = await AIContextService.buildContext(text);
       final response = await _geminiService.sendMessage(
         userMessage: text,
         dataContext: dataContext,
+        base64Image: base64Image,
       );
 
       if (mounted) {
@@ -127,13 +181,11 @@ class _AgentScreenState extends State<AgentScreen> {
             chartConfig: response.chartConfig,
           );
           _messages.add(assistantMsg);
-          _storageService.saveMessage(assistantMsg); // Lưu phản hồi AI vào Firestore
-          
+          _storageService.saveMessage(assistantMsg);
           if (response.chartConfig != null) {
             _currentChart = response.chartConfig;
             _chartHistory.add(response.chartConfig!);
           }
-          
           _isTyping = false;
         });
       }
@@ -169,59 +221,67 @@ class _AgentScreenState extends State<AgentScreen> {
     _handleSend();
   }
 
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) setState(() => _selectedImage = image);
+  }
 
+  // ─── BUILD ────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     final settings = Provider.of<SettingsProvider>(context);
     final isMobile = MediaQuery.of(context).size.width < 800;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Row(
-        children: [
-          Expanded(
-            flex: 5,
-            child: _buildChatColumn(context, settings, isMobile),
-          ),
-          if (!isMobile) ...[
-            const VerticalDivider(width: 1, color: Colors.white10),
+      backgroundColor: AppTheme.backgroundColor,
+      body: SelectionArea(
+        child: Row(
+          children: [
             Expanded(
-              flex: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: ChartPanel(
-                  currentChart: _currentChart,
-                  history: _chartHistory,
-                  onSelect: (config) {
-                    setState(() {
-                      _currentChart = config;
-                    });
-                  },
-                  onDrillDown: _handleDrillDown,
+              flex: 5,
+              child: _buildChatColumn(context, settings, isMobile),
+            ),
+            if (!isMobile) ...[
+              Container(
+                width: 1,
+                color: Colors.white.withOpacity(0.06),
+              ),
+              Expanded(
+                flex: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: ChartPanel(
+                    currentChart: _currentChart,
+                    history: _chartHistory,
+                    onSelect: (config) => setState(() => _currentChart = config),
+                    onDrillDown: _handleDrillDown,
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildChatColumn(BuildContext context, SettingsProvider settings, bool isMobile) {
+  Widget _buildChatColumn(
+      BuildContext context, SettingsProvider settings, bool isMobile) {
     return Column(
       children: [
         _buildHeader(context, settings, isMobile),
         Expanded(
-          child: _messages.isEmpty 
-            ? _buildEmptyState(settings)
-            : ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  return _buildMessageBubble(_messages[index], isMobile);
-                },
-              ),
+          child: _messages.isEmpty
+              ? _buildEmptyState(settings)
+              : ListView.builder(
+            controller: _scrollController,
+            padding: EdgeInsets.fromLTRB(
+                16, 20, 16, _isTyping ? 8 : 20),
+            itemCount: _messages.length,
+            itemBuilder: (context, index) =>
+                _buildMessageBubble(_messages[index], isMobile),
+          ),
         ),
         if (_isTyping) _buildTypingIndicator(),
         _buildInputArea(context, settings),
@@ -229,22 +289,62 @@ class _AgentScreenState extends State<AgentScreen> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, SettingsProvider settings, bool isMobile) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(20, isMobile ? 34 : 28, 20, 16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor.withOpacity(0.5),
-        border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05))),
-      ),
+  // ─── HEADER ──────────────────────────────────────────────────
+  Widget _buildHeader(
+      BuildContext context, SettingsProvider settings, bool isMobile) {
+    return AnimatedBuilder(
+      animation: _headerGlowAnimation,
+      builder: (context, child) {
+        return ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(20, isMobile ? 52 : 28, 16, 16),
+              decoration: BoxDecoration(
+                color: AppTheme.cardColor.withOpacity(0.75),
+                border: Border(
+                  bottom: BorderSide(color: Colors.white.withOpacity(0.07)),
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppTheme.primaryColor
+                        .withOpacity(0.05 + _headerGlowAnimation.value * 0.04),
+                    AppTheme.cardColor.withOpacity(0.0),
+                    AppTheme.secondaryColor
+                        .withOpacity(0.03 + _headerGlowAnimation.value * 0.03),
+                  ],
+                ),
+              ),
+              child: child,
+            ),
+          ),
+        );
+      },
       child: Row(
         children: [
+          // Logo badge with gradient + glow
           Container(
-            padding: const EdgeInsets.all(10),
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [AppTheme.primaryColor, AppTheme.secondaryColor]),
-              borderRadius: BorderRadius.circular(12),
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryColor.withOpacity(0.45),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            child: const Icon(Icons.psychology_rounded, color: Colors.white, size: 24),
+            child: const Icon(Icons.psychology_rounded,
+                color: Colors.white, size: 24),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -252,128 +352,318 @@ class _AgentScreenState extends State<AgentScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  settings.isVietnamese ? 'Trợ lý AI Phân tích' : 'AI Analysis Agent',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  settings.isVietnamese
+                      ? 'Trợ lý AI Phân tích'
+                      : 'AI Analysis Agent',
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    letterSpacing: 0.1,
+                  ),
                 ),
-                Text(
-                  settings.isVietnamese ? 'Trực tuyến • Sẵn sàng hỗ trợ' : 'Online • Ready to assist',
-                  style: TextStyle(fontSize: 12, color: AppTheme.accentColor.withOpacity(0.8)),
+                const SizedBox(height: 3),
+                Row(
+                  children: [
+                    // Animated green dot
+                    Container(
+                      width: 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: AppTheme.accentColor,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                              color: AppTheme.accentColor.withOpacity(0.6),
+                              blurRadius: 6),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      settings.isVietnamese
+                          ? 'Trực tuyến • Sẵn sàng hỗ trợ'
+                          : 'Online • Ready to assist',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.accentColor.withOpacity(0.85),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.description_rounded, size: 16),
-            label: const Text('Báo cáo', style: TextStyle(fontSize: 12)),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-              foregroundColor: AppTheme.primaryColor,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            ),
-            onPressed: () {
-              _controller.text = "Tạo báo cáo hiệu quả kinh doanh chi tiết năm 2015 kèm biểu đồ tổng hợp";
+          // Report button — glass pill
+          _buildHeaderAction(
+            icon: Icons.description_rounded,
+            label: 'Báo cáo',
+            onTap: () {
+              _controller.text =
+              "Tạo báo cáo hiệu quả kinh doanh chi tiết năm 2015 kèm biểu đồ tổng hợp";
               _handleSend();
             },
           ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.delete_sweep_outlined, color: Colors.grey),
-            onPressed: _clearHistory,
+          const SizedBox(width: 6),
+          // Clear history button
+          _buildIconAction(
+            icon: Icons.delete_sweep_outlined,
+            onTap: _clearHistory,
           ),
         ],
       ),
     );
   }
 
+  Widget _buildHeaderAction(
+      {required IconData icon,
+        required String label,
+        required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withOpacity(0.14),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                  color: AppTheme.primaryColor.withOpacity(0.35), width: 1),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 15, color: AppTheme.primaryColor),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppTheme.primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIconAction(
+      {required IconData icon, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.white.withOpacity(0.08)),
+        ),
+        child: Icon(icon, size: 18, color: Colors.grey.shade500),
+      ),
+    );
+  }
+
+  // ─── EMPTY STATE ────────────────────────────────────────────
   Widget _buildEmptyState(SettingsProvider settings) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.chat_bubble_outline_rounded, size: 64, color: Colors.white.withOpacity(0.1)),
-          const SizedBox(height: 16),
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppTheme.primaryColor.withOpacity(0.2),
+                  Colors.transparent,
+                ],
+              ),
+              border: Border.all(
+                  color: AppTheme.primaryColor.withOpacity(0.2), width: 1.5),
+            ),
+            child: Icon(Icons.chat_bubble_outline_rounded,
+                size: 32, color: AppTheme.primaryColor.withOpacity(0.5)),
+          ),
+          const SizedBox(height: 20),
           Text(
-            settings.isVietnamese ? 'Bắt đầu cuộc hội thoại' : 'Start a conversation',
-            style: TextStyle(color: Colors.white.withOpacity(0.3)),
+            settings.isVietnamese
+                ? 'Bắt đầu cuộc hội thoại'
+                : 'Start a conversation',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.4),
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            settings.isVietnamese
+                ? 'Đặt câu hỏi về dữ liệu của bạn'
+                : 'Ask anything about your data',
+            style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 13),
           ),
         ],
       ),
     );
   }
 
+  // ─── MESSAGE BUBBLE ──────────────────────────────────────────
   Widget _buildMessageBubble(ChatMessage message, bool isMobile) {
     final isUser = message.role == MessageRole.user;
-    
+    final isError = message.status == MessageStatus.error;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Column(
-        crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment:
+        isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              if (!isUser) _buildAvatar(Icons.auto_awesome_rounded),
-              const SizedBox(width: 8),
+              if (!isUser) ...[
+                _buildAvatar(Icons.auto_awesome_rounded, isUser: false),
+                const SizedBox(width: 10),
+              ],
               Flexible(
                 child: Column(
-                  crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                  isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: isUser ? AppTheme.primaryColor : Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.only(
-                          topLeft: const Radius.circular(16),
-                          topRight: const Radius.circular(16),
-                          bottomLeft: Radius.circular(isUser ? 16 : 4),
-                          bottomRight: Radius.circular(isUser ? 4 : 16),
-                        ),
+                    // Bubble
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(18),
+                        topRight: const Radius.circular(18),
+                        bottomLeft: Radius.circular(isUser ? 18 : 4),
+                        bottomRight: Radius.circular(isUser ? 4 : 18),
                       ),
-                      child: _buildFormattedText(
-                        message.content,
-                        TextStyle(
-                          color: isUser ? Colors.white : Colors.white.withOpacity(0.9),
-                          fontSize: 14,
-                          height: 1.5,
+                      child: BackdropFilter(
+                        filter: isUser
+                            ? ImageFilter.blur(sigmaX: 0, sigmaY: 0)
+                            : ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 13),
+                          decoration: BoxDecoration(
+                            gradient: isUser
+                                ? const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppTheme.primaryColor,
+                                Color(0xFF4F46E5),
+                              ],
+                            )
+                                : null,
+                            color: isUser
+                                ? null
+                                : isError
+                                ? Colors.red.withOpacity(0.12)
+                                : AppTheme.cardColor.withOpacity(0.9),
+                            border: isUser
+                                ? null
+                                : Border.all(
+                              color: isError
+                                  ? Colors.red.withOpacity(0.3)
+                                  : Colors.white.withOpacity(0.08),
+                              width: 1,
+                            ),
+                            boxShadow: isUser
+                                ? [
+                              BoxShadow(
+                                color: AppTheme.primaryColor
+                                    .withOpacity(0.3),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                                : [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 10,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: _buildFormattedText(
+                            message.content,
+                            TextStyle(
+                              color: isUser
+                                  ? Colors.white
+                                  : isError
+                                  ? Colors.red.shade300
+                                  : Colors.white.withOpacity(0.92),
+                              fontSize: 14,
+                              height: 1.6,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    if (isMobile && message.chartConfig != null) ...[
-                      const SizedBox(height: 12),
-                      Container(
-                        width: double.infinity,
-                        height: 220, // Bổ sung chiều cao cố định để fix lỗi overflow
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.04),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.white.withOpacity(0.07)),
-                        ),
-                        child: DynamicChartWidget(
-                          config: message.chartConfig!,
-                          compact: true,
-                          onDrillDown: _handleDrillDown,
-                        ),
+
+                    // Image attachment
+                    if (message.localImagePath != null ||
+                        message.imageUrl != null) ...[
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: _buildChatImage(message),
                       ),
                     ],
 
+                    // Compact chart (mobile)
+                    if (isMobile && message.chartConfig != null) ...[
+                      const SizedBox(height: 12),
+                      _buildCompactChart(message.chartConfig!),
+                    ],
+
+                    // Timestamp
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5, left: 4, right: 4),
+                      child: Text(
+                        _formatTime(message.timestamp),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.white.withOpacity(0.22),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              if (isUser) _buildAvatar(Icons.person_rounded),
+              if (isUser) ...[
+                const SizedBox(width: 10),
+                _buildAvatar(Icons.person_rounded, isUser: true),
+              ],
             ],
           ),
-          if (message.quickReplySuggestions != null && message.quickReplySuggestions!.isNotEmpty)
+
+          // Quick replies
+          if (message.quickReplySuggestions != null &&
+              message.quickReplySuggestions!.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(left: 44, top: 12),
+              padding: const EdgeInsets.only(left: 46, top: 12),
               child: Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: message.quickReplySuggestions!.map((s) => _buildQuickReply(s)).toList(),
+                children: message.quickReplySuggestions!
+                    .map((s) => _buildQuickReply(s))
+                    .toList(),
               ),
             ),
         ],
@@ -381,19 +671,96 @@ class _AgentScreenState extends State<AgentScreen> {
     );
   }
 
-  Widget _buildAvatar(IconData icon) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: icon == Icons.person_rounded ? Colors.blue.withOpacity(0.1) : AppTheme.secondaryColor.withOpacity(0.1),
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+  Widget _buildCompactChart(ChartConfig config) {
+    return GestureDetector(
+      onTap: () => _showExpandedChart(config),
+      child: Container(
+        width: double.infinity,
+        height: 220,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppTheme.cardColor.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(18),
+          border:
+          Border.all(color: Colors.white.withOpacity(0.08), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 14,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            DynamicChartWidget(
+              config: config,
+              compact: true,
+              onDrillDown: _handleDrillDown,
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                          color: AppTheme.primaryColor.withOpacity(0.3)),
+                    ),
+                    child: const Icon(Icons.fullscreen_rounded,
+                        size: 14, color: AppTheme.primaryColor),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-      child: Icon(icon, size: 18, color: icon == Icons.person_rounded ? Colors.blue : AppTheme.secondaryColor),
     );
   }
 
+  // ─── AVATAR ──────────────────────────────────────────────────
+  Widget _buildAvatar(IconData icon, {required bool isUser}) {
+    return Container(
+      width: 34,
+      height: 34,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: isUser
+            ? LinearGradient(
+          colors: [
+            Colors.blue.shade400.withOpacity(0.3),
+            Colors.blue.shade700.withOpacity(0.15),
+          ],
+        )
+            : LinearGradient(
+          colors: [
+            AppTheme.secondaryColor.withOpacity(0.25),
+            AppTheme.primaryColor.withOpacity(0.15),
+          ],
+        ),
+        border: Border.all(
+          color: isUser
+              ? Colors.blue.withOpacity(0.2)
+              : AppTheme.secondaryColor.withOpacity(0.25),
+          width: 1,
+        ),
+      ),
+      child: Icon(
+        icon,
+        size: 17,
+        color: isUser ? Colors.blue.shade300 : AppTheme.secondaryColor,
+      ),
+    );
+  }
+
+  // ─── QUICK REPLY ─────────────────────────────────────────────
   Widget _buildQuickReply(String text) {
     return GestureDetector(
       onTap: () {
@@ -403,84 +770,85 @@ class _AgentScreenState extends State<AgentScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: AppTheme.primaryColor.withOpacity(0.1),
+          color: AppTheme.primaryColor.withOpacity(0.08),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppTheme.primaryColor.withOpacity(0.3)),
+          border:
+          Border.all(color: AppTheme.primaryColor.withOpacity(0.28), width: 1),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(color: AppTheme.primaryColor, fontSize: 12, fontWeight: FontWeight.w500),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.bolt_rounded,
+                size: 13, color: AppTheme.primaryColor.withOpacity(0.7)),
+            const SizedBox(width: 5),
+            Text(
+              text,
+              style: const TextStyle(
+                color: AppTheme.primaryColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
+  // ─── TYPING INDICATOR ────────────────────────────────────────
   Widget _buildTypingIndicator() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          _buildAvatar(Icons.auto_awesome_rounded),
-          const SizedBox(width: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(16),
+          _buildAvatar(Icons.auto_awesome_rounded, isUser: false),
+          const SizedBox(width: 10),
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(18),
+              topRight: Radius.circular(18),
+              bottomRight: Radius.circular(18),
+              bottomLeft: Radius.circular(4),
             ),
-            child: const SizedBox(
-              width: 30,
-              child: LinearProgressIndicator(
-                backgroundColor: Colors.transparent,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInputArea(BuildContext context, SettingsProvider settings) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
-              ),
-              child: TextField(
-                controller: _controller,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-                decoration: InputDecoration(
-                  hintText: settings.isVietnamese ? 'Hỏi trợ lý về dữ liệu...' : 'Ask about your data...',
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
-                  border: InputBorder.none,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                decoration: BoxDecoration(
+                  color: AppTheme.cardColor.withOpacity(0.9),
+                  border: Border.all(color: Colors.white.withOpacity(0.08)),
                 ),
-                onSubmitted: (_) => _handleSend(),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(3, (i) {
+                    return AnimatedBuilder(
+                      animation: _dotController,
+                      builder: (context, child) {
+                        final delay = i * 0.18;
+                        final t = (_dotController.value - delay).clamp(0.0, 1.0);
+                        final bounce = (t < 0.5 ? t * 2 : (1 - t) * 2);
+                        return Container(
+                          margin: EdgeInsets.only(right: i < 2 ? 5 : 0),
+                          child: Transform.translate(
+                            offset: Offset(0, -4 * bounce),
+                            child: Container(
+                              width: 7,
+                              height: 7,
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryColor
+                                    .withOpacity(0.4 + bounce * 0.5),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          GestureDetector(
-            onTap: _handleSend,
-            child: Container(
-              width: 48,
-              height: 48,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(colors: [AppTheme.primaryColor, AppTheme.secondaryColor]),
-              ),
-              child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
             ),
           ),
         ],
@@ -488,6 +856,268 @@ class _AgentScreenState extends State<AgentScreen> {
     );
   }
 
+  // ─── INPUT AREA ──────────────────────────────────────────────
+  Widget _buildInputArea(BuildContext context, SettingsProvider settings) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Image preview
+        if (_selectedImage != null) _buildImagePreview(),
+
+        // Input row
+        ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: EdgeInsets.fromLTRB(
+                  14, 12, 14, MediaQuery.of(context).padding.bottom + 14),
+              decoration: BoxDecoration(
+                color: AppTheme.cardColor.withOpacity(0.82),
+                border: Border(
+                  top: BorderSide(
+                    color: _inputFocused
+                        ? AppTheme.primaryColor.withOpacity(0.25)
+                        : Colors.white.withOpacity(0.06),
+                    width: _inputFocused ? 1.5 : 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Image picker icon
+                  _buildInputIconButton(
+                    icon: Icons.image_rounded,
+                    color: AppTheme.primaryColor.withOpacity(0.7),
+                    onTap: _pickImage,
+                  ),
+                  const SizedBox(width: 8),
+
+                  // Text field
+                  Expanded(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _inputFocused
+                            ? AppTheme.backgroundColor.withOpacity(0.9)
+                            : AppTheme.backgroundColor.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(26),
+                        border: Border.all(
+                          color: _inputFocused
+                              ? AppTheme.primaryColor.withOpacity(0.45)
+                              : Colors.white.withOpacity(0.1),
+                          width: _inputFocused ? 1.5 : 1,
+                        ),
+                        boxShadow: _inputFocused
+                            ? [
+                          BoxShadow(
+                            color: AppTheme.primaryColor.withOpacity(0.08),
+                            blurRadius: 12,
+                            spreadRadius: 2,
+                          ),
+                        ]
+                            : null,
+                      ),
+                      child: TextField(
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            height: 1.4),
+                        maxLines: 4,
+                        minLines: 1,
+                        decoration: InputDecoration(
+                          hintText: settings.isVietnamese
+                              ? 'Hỏi trợ lý về dữ liệu...'
+                              : 'Ask about your data...',
+                          hintStyle: TextStyle(
+                            color: Colors.white.withOpacity(0.28),
+                            fontSize: 14,
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding:
+                          const EdgeInsets.symmetric(vertical: 10),
+                        ),
+                        onSubmitted: (_) => _handleSend(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+
+                  // Send button
+                  GestureDetector(
+                    onTap: _handleSend,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      width: 46,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: _isTyping
+                            ? LinearGradient(
+                          colors: [
+                            Colors.grey.shade700,
+                            Colors.grey.shade800
+                          ],
+                        )
+                            : const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            AppTheme.primaryColor,
+                            AppTheme.secondaryColor,
+                          ],
+                        ),
+                        boxShadow: _isTyping
+                            ? []
+                            : [
+                          BoxShadow(
+                            color: AppTheme.primaryColor.withOpacity(0.4),
+                            blurRadius: 14,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        _isTyping
+                            ? Icons.hourglass_empty_rounded
+                            : Icons.send_rounded,
+                        color: Colors.white,
+                        size: 19,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInputIconButton(
+      {required IconData icon,
+        required Color color,
+        required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white.withOpacity(0.08)),
+        ),
+        child: Icon(icon, size: 19, color: color),
+      ),
+    );
+  }
+
+  Widget _buildImagePreview() {
+    return Container(
+      color: AppTheme.cardColor.withOpacity(0.6),
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: kIsWeb
+                ? Image.network(_selectedImage!.path,
+                height: 72, width: 72, fit: BoxFit.cover)
+                : Image.file(File(_selectedImage!.path),
+                height: 72, width: 72, fit: BoxFit.cover),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'Ảnh đã chọn',
+              style: TextStyle(
+                  color: Colors.white.withOpacity(0.5), fontSize: 12),
+            ),
+          ),
+          GestureDetector(
+            onTap: () => setState(() => _selectedImage = null),
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.08),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.close_rounded,
+                  size: 16, color: Colors.white70),
+            ),
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+
+  // ─── IMAGE IN CHAT ───────────────────────────────────────────
+  Widget _buildChatImage(ChatMessage message) {
+    if (message.localImagePath != null) {
+      if (kIsWeb) {
+        return Image.network(message.localImagePath!,
+            width: 220, height: 160, fit: BoxFit.cover);
+      } else {
+        return Image.file(File(message.localImagePath!),
+            width: 220, height: 160, fit: BoxFit.cover);
+      }
+    }
+    return Image.network(
+      message.imageUrl!,
+      width: 220,
+      height: 160,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return Container(
+          width: 220,
+          height: 160,
+          color: Colors.white.withOpacity(0.04),
+          child: Center(
+            child: CircularProgressIndicator(
+              value: progress.expectedTotalBytes != null
+                  ? progress.cumulativeBytesLoaded /
+                  progress.expectedTotalBytes!
+                  : null,
+              strokeWidth: 2,
+              color: AppTheme.primaryColor,
+            ),
+          ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) => Container(
+        width: 220,
+        height: 160,
+        decoration: BoxDecoration(
+          color: Colors.red.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.red.withOpacity(0.2)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.broken_image_rounded,
+                color: Colors.red.withOpacity(0.5), size: 28),
+            const SizedBox(height: 6),
+            Text('Không tải được ảnh',
+                style: TextStyle(
+                    color: Colors.red.withOpacity(0.5), fontSize: 11)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─── FORMATTED TEXT ──────────────────────────────────────────
   Widget _buildFormattedText(String text, TextStyle baseStyle) {
     final List<TextSpan> spans = [];
     final RegExp exp = RegExp(r'\*\*(.*?)\*\*');
@@ -499,15 +1129,85 @@ class _AgentScreenState extends State<AgentScreen> {
       }
       spans.add(TextSpan(
         text: match.group(1),
-        style: baseStyle.copyWith(fontWeight: FontWeight.bold, color: AppTheme.accentColor),
+        style: baseStyle.copyWith(
+          fontWeight: FontWeight.w700,
+          color: AppTheme.accentColor,
+        ),
       ));
       lastMatchEnd = match.end;
     }
-
     if (lastMatchEnd < text.length) {
       spans.add(TextSpan(text: text.substring(lastMatchEnd)));
     }
 
-    return RichText(text: TextSpan(style: baseStyle, children: spans));
+    return SelectableText.rich(TextSpan(style: baseStyle, children: spans));
+  }
+
+  // ─── EXPANDED CHART SHEET ────────────────────────────────────
+  void _showExpandedChart(ChartConfig config) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ClipRRect(
+        borderRadius:
+        const BorderRadius.vertical(top: Radius.circular(28)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.85,
+            decoration: BoxDecoration(
+              color: AppTheme.backgroundColor.withOpacity(0.95),
+              borderRadius:
+              const BorderRadius.vertical(top: Radius.circular(28)),
+              border: Border.all(color: Colors.white.withOpacity(0.08)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  blurRadius: 30,
+                  offset: const Offset(0, -8),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 14),
+                // Drag handle
+                Container(
+                  width: 44,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    child: ChartPanel(
+                      currentChart: config,
+                      history: [config],
+                      onSelect: (c) {},
+                      onDrillDown: (label) {
+                        Navigator.pop(context);
+                        _handleDrillDown(label);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ─── UTILS ───────────────────────────────────────────────────
+  String _formatTime(DateTime dt) {
+    final h = dt.hour.toString().padLeft(2, '0');
+    final m = dt.minute.toString().padLeft(2, '0');
+    return '$h:$m';
   }
 }

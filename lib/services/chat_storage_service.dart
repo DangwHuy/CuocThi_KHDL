@@ -22,6 +22,7 @@ class ChatStorageService {
         'role': message.role.toString(),
         'timestamp': message.timestamp,
         'chartConfig': message.chartConfig != null ? _chartConfigToMap(message.chartConfig!) : null,
+        'imageUrl': message.imageUrl,
         'status': message.status.toString(),
       });
     } catch (e) {
@@ -47,6 +48,7 @@ class ChatStorageService {
           role: _parseRole(data['role']),
           timestamp: (data['timestamp'] as Timestamp).toDate(),
           chartConfig: data['chartConfig'] != null ? _mapToChartConfig(data['chartConfig']) : null,
+          imageUrl: data['imageUrl'],
           status: _parseStatus(data['status']),
         );
       }).toList();

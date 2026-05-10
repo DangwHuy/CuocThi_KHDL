@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../models/chart_config.dart';
 import '../theme/app_theme.dart';
@@ -21,198 +22,369 @@ class ChartPanel extends StatefulWidget {
   State<ChartPanel> createState() => _ChartPanelState();
 }
 
-class _ChartPanelState extends State<ChartPanel> with SingleTickerProviderStateMixin {
+class _ChartPanelState extends State<ChartPanel>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+  late Animation<double> _rotateAnimation;
+  late PageController _pageController;
+  late ScrollController _historyScrollController;
 
   @override
   void initState() {
     super.initState();
+    
+    // Khởi tạo PageController tại vị trí của biểu đồ hiện tại
+    final initialPage = widget.currentChart != null 
+        ? widget.history.indexOf(widget.currentChart!) 
+        : 0;
+    _pageController = PageController(initialPage: initialPage.clamp(0, widget.history.length));
+    _historyScrollController = ScrollController();
+
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 3),
     )..repeat(reverse: true);
-    
-    _pulseAnimation = Tween<double>(begin: 0.4, end: 0.8).animate(
+
+    _pulseAnimation = Tween<double>(begin: 0.3, end: 0.85).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+    _rotateAnimation = Tween<double>(begin: -0.05, end: 0.05).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
   }
 
   @override
+  void didUpdateWidget(ChartPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Nếu biểu đồ hiện tại thay đổi từ bên ngoài (ví dụ click nút), hãy trượt PageView đến đó
+    if (widget.currentChart != oldWidget.currentChart && widget.currentChart != null) {
+      final index = widget.history.indexOf(widget.currentChart!);
+      if (index != -1 && _pageController.hasClients) {
+        if ((_pageController.page?.round() ?? -1) != index) {
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeOutCubic,
+          );
+        }
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _pulseController.dispose();
+    _pageController.dispose();
+    _historyScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.currentChart == null) {
+    if (widget.currentChart == null || widget.history.isEmpty) {
       return _buildEmptyState(context);
     }
 
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
-      transitionBuilder: (child, anim) => FadeTransition(
-        opacity: anim,
-        child: SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0.05, 0),
-            end: Offset.zero,
-          ).animate(anim),
-          child: child,
-        ),
-      ),
-      child: Container(
-        key: ValueKey(widget.currentChart!.title + widget.currentChart!.type + widget.history.indexOf(widget.currentChart!).toString()),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withOpacity(0.07)),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Theme.of(context).cardColor,
-              Color.fromARGB(
-                255,
-                Theme.of(context).cardColor.red,
-                Theme.of(context).cardColor.green,
-                (Theme.of(context).cardColor.blue + 8).clamp(0, 255),
-              ),
-            ],
+    return Column(
+      children: [
+        Expanded(
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: widget.history.length,
+            onPageChanged: (index) {
+              if (index < widget.history.length) {
+                widget.onSelect?.call(widget.history[index]);
+              }
+            },
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              final chart = widget.history[index];
+              return _buildChartCard(context, chart);
+            },
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            )
-          ],
         ),
-        child: Column(
-          children: [
-            // Header
-            Row(
+        if (widget.history.length > 1) ...[
+          const SizedBox(height: 16),
+          _buildDivider(),
+          const SizedBox(height: 14),
+          _buildHistoryList(),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildChartCard(BuildContext context, ChartConfig chart) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      key: ValueKey(
+        chart.title +
+            chart.type +
+            widget.history.indexOf(chart).toString(),
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryColor.withOpacity(0.08),
+            blurRadius: 40,
+            spreadRadius: 0,
+            offset: const Offset(0, 16),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.35),
+            blurRadius: 24,
+            spreadRadius: -4,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Container(
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: AppTheme.cardColor.withOpacity(0.82),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.09),
+                width: 1,
+              ),
+            ),
+            child: Column(
               children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppTheme.primaryColor, AppTheme.primaryColor.withOpacity(0.6)],
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.bar_chart_rounded, color: Colors.white, size: 18),
-                ),
-                const SizedBox(width: 10),
+                _buildHeader(chart),
+                const SizedBox(height: 20),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'PHÂN TÍCH DỮ LIỆU',
-                        style: TextStyle(fontSize: 10, color: Colors.grey.shade500, letterSpacing: 0.08, fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        widget.currentChart!.title,
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppTheme.primaryColor.withOpacity(0.3)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(_getIconForType(widget.currentChart!.type), size: 12, color: AppTheme.primaryColor),
-                      const SizedBox(width: 4),
-                      Text(
-                        widget.currentChart!.type.toUpperCase(),
-                        style: const TextStyle(fontSize: 10, color: AppTheme.primaryColor, fontWeight: FontWeight.w600),
-                      ),
-                    ],
+                  child: DynamicChartWidget(
+                    config: chart,
+                    compact: false,
+                    onDrillDown: widget.onDrillDown,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-            
-            // Main Chart
-            Expanded(
-              child: DynamicChartWidget(
-                config: widget.currentChart!, 
-                compact: false,
-                onDrillDown: widget.onDrillDown,
-              ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(ChartConfig chart) {
+    return Row(
+      children: [
+        // Gradient icon badge
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppTheme.primaryColor,
+                AppTheme.primaryColor.withOpacity(0.5),
+              ],
             ),
-            
-            // History
-            if (widget.history.length > 1) ...[
-              const SizedBox(height: 16),
-              Divider(color: Colors.white.withOpacity(0.05)),
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 44,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: widget.history.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 10),
-                  itemBuilder: (ctx, i) {
-                    final item = widget.history[i];
-                    final isSelected = item == widget.currentChart;
-                    return GestureDetector(
-                      onTap: () => widget.onSelect?.call(item),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          gradient: isSelected 
-                              ? LinearGradient(colors: [AppTheme.primaryColor.withOpacity(0.3), AppTheme.primaryColor.withOpacity(0.1)])
-                              : null,
-                          color: isSelected ? null : Colors.white.withOpacity(0.03),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: isSelected ? AppTheme.primaryColor.withOpacity(0.5) : Colors.white.withOpacity(0.05),
-                            width: isSelected ? 1.5 : 1,
-                          ),
-                        ),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              _getIconForType(item.type),
-                              size: 12,
-                              color: isSelected ? AppTheme.primaryColor : Colors.grey.shade600,
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              item.title.length > 12 ? '${item.title.substring(0, 11)}…' : item.title,
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: isSelected ? AppTheme.primaryColor : Colors.grey.shade600,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryColor.withOpacity(0.4),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
             ],
+          ),
+          child: const Icon(Icons.bar_chart_rounded, color: Colors.white, size: 19),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'PHÂN TÍCH DỮ LIỆU',
+                style: TextStyle(
+                  fontSize: 9.5,
+                  color: Colors.grey.shade500,
+                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                chart.title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  letterSpacing: 0.1,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        // Chart type badge — glassmorphism pill
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: AppTheme.primaryColor.withOpacity(0.35),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    _getIconForType(chart.type),
+                    size: 12,
+                    color: AppTheme.primaryColor,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    chart.type.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      height: 1,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.transparent,
+            Colors.white.withOpacity(0.08),
+            Colors.white.withOpacity(0.08),
+            Colors.transparent,
           ],
+          stops: const [0.0, 0.2, 0.8, 1.0],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryList() {
+    return SizedBox(
+      height: 54, // Tăng nhẹ chiều cao để không bị thanh cuộn che mất
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(
+          dragDevices: {
+            PointerDeviceKind.touch,
+            PointerDeviceKind.mouse,
+            PointerDeviceKind.trackpad,
+          },
+        ),
+        child: Scrollbar(
+          controller: _historyScrollController,
+          thumbVisibility: true,
+          thickness: 3,
+          radius: const Radius.circular(10),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0), // Tạo khoảng trống cho thanh cuộn
+            child: ListView.separated(
+              controller: _historyScrollController,
+              scrollDirection: Axis.horizontal,
+              itemCount: widget.history.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (ctx, i) {
+                final item = widget.history[i];
+                final isSelected = item == widget.currentChart;
+                return GestureDetector(
+                  onTap: () => widget.onSelect?.call(item),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeOutCubic,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                    decoration: BoxDecoration(
+                      gradient: isSelected
+                          ? LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppTheme.primaryColor.withOpacity(0.32),
+                          AppTheme.primaryColor.withOpacity(0.12),
+                        ],
+                      )
+                          : null,
+                      color: isSelected ? null : Colors.white.withOpacity(0.04),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppTheme.primaryColor.withOpacity(0.6)
+                            : Colors.white.withOpacity(0.07),
+                        width: isSelected ? 1.5 : 1,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                        BoxShadow(
+                          color: AppTheme.primaryColor.withOpacity(0.2),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ]
+                          : null,
+                    ),
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedScale(
+                          scale: isSelected ? 1.15 : 1.0,
+                          duration: const Duration(milliseconds: 250),
+                          child: Icon(
+                            _getIconForType(item.type),
+                            size: 12,
+                            color: isSelected
+                                ? AppTheme.primaryColor
+                                : Colors.grey.shade600,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          item.title.length > 13
+                              ? '${item.title.substring(0, 12)}…'
+                              : item.title,
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            color: isSelected
+                                ? AppTheme.primaryColor
+                                : Colors.grey.shade500,
+                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                            letterSpacing: isSelected ? 0.1 : 0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ),
       ),
     );
@@ -220,55 +392,186 @@ class _ChartPanelState extends State<ChartPanel> with SingleTickerProviderStateM
 
   IconData _getIconForType(String type) {
     switch (type) {
-      case 'bar': return Icons.bar_chart_rounded;
-      case 'line': return Icons.show_chart_rounded;
-      case 'pie': return Icons.pie_chart_rounded;
-      case 'grouped_bar': return Icons.stacked_bar_chart_rounded;
-      default: return Icons.analytics_rounded;
+      case 'bar':
+        return Icons.bar_chart_rounded;
+      case 'line':
+        return Icons.show_chart_rounded;
+      case 'pie':
+        return Icons.pie_chart_rounded;
+      case 'grouped_bar':
+        return Icons.stacked_bar_chart_rounded;
+      case 'combo':
+        return Icons.auto_graph_rounded;
+      default:
+        return Icons.analytics_rounded;
     }
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.07)),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Theme.of(context).cardColor,
-            Color.fromARGB(
-              255,
-              Theme.of(context).cardColor.red,
-              Theme.of(context).cardColor.green,
-              (Theme.of(context).cardColor.blue + 8).clamp(0, 255),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppTheme.cardColor.withOpacity(0.75),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withOpacity(0.07)),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withOpacity(0.05),
+                AppTheme.cardColor.withOpacity(0.0),
+                AppTheme.primaryColor.withOpacity(0.03),
+              ],
             ),
-          ],
-        ),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FadeTransition(
-              opacity: _pulseAnimation,
-              child: Icon(Icons.area_chart_outlined, size: 44, color: Colors.grey.shade700),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Biểu đồ sẽ xuất hiện ở đây',
-              style: TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Hỏi AI về sản phẩm, xu hướng hoặc khách hàng',
-              style: TextStyle(color: Colors.grey.shade700, fontSize: 11),
-            ),
-          ],
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Decorative background rings
+              Positioned.fill(
+                child: AnimatedBuilder(
+                  animation: _pulseController,
+                  builder: (context, child) {
+                    return CustomPaint(
+                      painter: _EmptyStatePainter(
+                        opacity: _pulseAnimation.value * 0.12,
+                        rotate: _rotateAnimation.value,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              // Content
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedBuilder(
+                    animation: _pulseController,
+                    builder: (context, child) {
+                      return Opacity(
+                        opacity: _pulseAnimation.value,
+                        child: Container(
+                          width: 72,
+                          height: 72,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: RadialGradient(
+                              colors: [
+                                AppTheme.primaryColor.withOpacity(0.18),
+                                Colors.transparent,
+                              ],
+                            ),
+                            border: Border.all(
+                              color: AppTheme.primaryColor.withOpacity(0.2),
+                              width: 1,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.area_chart_outlined,
+                            size: 32,
+                            color: AppTheme.primaryColor.withOpacity(0.6),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Biểu đồ sẽ xuất hiện ở đây',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.1,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Hỏi AI về sản phẩm, xu hướng hoặc khách hàng',
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 12,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  // Decorative chips
+                  Wrap(
+                    spacing: 8,
+                    children: ['Doanh thu', 'Xu hướng', 'Khách hàng']
+                        .map((label) => Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: AppTheme.primaryColor.withOpacity(0.2),
+                        ),
+                      ),
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: AppTheme.primaryColor.withOpacity(0.7),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ))
+                        .toList(),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+// Decorative concentric rings painter for empty state
+class _EmptyStatePainter extends CustomPainter {
+  final double opacity;
+  final double rotate;
+
+  _EmptyStatePainter({required this.opacity, required this.rotate});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    final radii = [size.width * 0.28, size.width * 0.4, size.width * 0.52];
+    for (int i = 0; i < radii.length; i++) {
+      paint.color = AppTheme.primaryColor.withOpacity(opacity * (1 - i * 0.25));
+      canvas.drawCircle(center, radii[i], paint);
+    }
+
+    // Subtle diagonal line pattern
+    final linePaint = Paint()
+      ..color = Colors.white.withOpacity(opacity * 0.4)
+      ..strokeWidth = 0.5;
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.rotate(rotate);
+    canvas.translate(-center.dx, -center.dy);
+    for (double x = -size.width; x < size.width * 2; x += 28) {
+      canvas.drawLine(
+        Offset(x, 0),
+        Offset(x + size.height, size.height),
+        linePaint,
+      );
+    }
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(_EmptyStatePainter old) =>
+      old.opacity != opacity || old.rotate != rotate;
 }

@@ -11,6 +11,8 @@ class ChatMessage {
   final DateTime timestamp;
   final List<String>? quickReplySuggestions;
   final ChartConfig? chartConfig;
+  final String? imageUrl;
+  final String? localImagePath;
 
   ChatMessage({
     required this.id,
@@ -20,5 +22,7 @@ class ChatMessage {
     required this.timestamp,
     this.quickReplySuggestions,
     this.chartConfig,
+    this.imageUrl,
+    this.localImagePath,
   });
 }
