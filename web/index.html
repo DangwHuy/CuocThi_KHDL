@@ -1,38 +1,214 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Hệ thống AI Phân tích dữ liệu bán lẻ chuyên nghiệp.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="khoahocdulieu">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AI Analytics">
+  <link rel="apple-touch-icon" href="favicon.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>khoahocdulieu</title>
+  <title>AI Data Analytics System</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* ═══════════════════════════════════════════════════════
+       PREMIUM INTRO / SPLASH SCREEN STYLES
+       ═══════════════════════════════════════════════════════ */
+    body {
+      background-color: #0B0F19; /* Tông màu tối, chuẩn hệ thống */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+      font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .splash-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      z-index: 10;
+      animation: fadeIn 1s ease-out;
+    }
+
+    /* Hiệu ứng Logo Glow */
+    .logo-container {
+      width: 110px;
+      height: 110px;
+      background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 40px rgba(139, 92, 246, 0.5);
+      position: relative;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .logo-container::after {
+      content: '';
+      position: absolute;
+      top: -4px; left: -4px; right: -4px; bottom: -4px;
+      background: linear-gradient(135deg, #3B82F6, #8B5CF6, #10B981);
+      border-radius: 32px;
+      z-index: -1;
+      animation: pulse-border 2.5s linear infinite;
+    }
+
+    .logo-icon {
+      font-size: 52px;
+      font-weight: 900;
+      color: white;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      letter-spacing: -2px;
+    }
+
+    /* Tiêu đề & Mô tả */
+    h1 {
+      font-size: 36px;
+      font-weight: 800;
+      margin: 0 0 12px 0;
+      background: linear-gradient(to right, #ffffff, #a5b4fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 0.5px;
+    }
+
+    p {
+      font-size: 16px;
+      color: #9ca3af;
+      margin: 0 0 45px 0;
+      max-width: 480px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    /* Thanh Loading AI */
+    .loader {
+      width: 240px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .loader-bar {
+      position: absolute;
+      top: 0; left: 0; height: 100%;
+      width: 40%;
+      background: linear-gradient(90deg, transparent, #8B5CF6, #10B981, transparent);
+      border-radius: 4px;
+      animation: loading-scan 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    .status-text {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+      animation: pulse-text 2s infinite;
+    }
+
+    /* Hiệu ứng Ánh sáng nền */
+    .bg-glow {
+      position: absolute;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, rgba(11, 15, 25, 0) 60%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    @keyframes loading-scan {
+      0% { left: -50%; width: 50%; }
+      100% { left: 100%; width: 50%; }
+    }
+
+    @keyframes pulse-border {
+      0% { opacity: 0.3; filter: blur(8px); }
+      50% { opacity: 0.8; filter: blur(14px); }
+      100% { opacity: 0.3; filter: blur(8px); }
+    }
+
+    @keyframes pulse-text {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    
+    /* Ẩn splash screen sau khi Flutter render */
+    flutter-view {
+      z-index: 100;
+      background-color: #0B0F19 !important;
+    }
+  </style>
 </head>
 <body>
+  <!-- Ánh sáng nền mờ -->
+  <div class="bg-glow"></div>
+  
+  <!-- Giao diện Intro -->
+  <div class="splash-container" id="intro-screen">
+    <div class="logo-container">
+      <div class="logo-icon">AI</div>
+    </div>
+    <h1>Data Science Platform</h1>
+    <p>Hệ thống tích hợp Trí tuệ Nhân tạo, Phân tích dữ liệu bán lẻ và Mô phỏng Thuật toán trực quan.</p>
+    
+    <div class="loader">
+      <div class="loader-bar"></div>
+    </div>
+    <div class="status-text">Đang khởi tạo Engine...</div>
+  </div>
+
   <script src="flutter_bootstrap.js" async></script>
+  
+  <script>
+    // Cập nhật trạng thái text ngẫu nhiên để tạo cảm giác "Hệ thống AI đang khởi động"
+    const statuses = [
+      "Đang tải môi trường...",
+      "Đang kết nối Neural Network...",
+      "Biên dịch thuật toán...",
+      "Chuẩn bị giao diện..."
+    ];
+    let idx = 0;
+    setInterval(() => {
+      idx = (idx + 1) % statuses.length;
+      const el = document.querySelector('.status-text');
+      if(el) el.innerText = statuses[idx];
+    }, 1200);
+  </script>
 </body>
 </html>

@@ -57,17 +57,27 @@ class _ChartPanelState extends State<ChartPanel>
   @override
   void didUpdateWidget(ChartPanel oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Nếu biểu đồ hiện tại thay đổi từ bên ngoài (ví dụ click nút), hãy trượt PageView đến đó
+    
+    // Nếu biểu đồ hiện tại thay đổi từ bên ngoài, hãy di chuyển PageView đến đó
     if (widget.currentChart != oldWidget.currentChart && widget.currentChart != null) {
       final index = widget.history.indexOf(widget.currentChart!);
-      if (index != -1 && _pageController.hasClients) {
-        if ((_pageController.page?.round() ?? -1) != index) {
-          _pageController.animateToPage(
-            index,
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeOutCubic,
-          );
-        }
+      if (index != -1) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_pageController.hasClients) {
+            final currentPage = _pageController.page?.round() ?? -1;
+            if (currentPage != index) {
+              if (oldWidget.currentChart == null) {
+                _pageController.jumpToPage(index);
+              } else {
+                _pageController.animateToPage(
+                  index,
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeOutCubic,
+                );
+              }
+            }
+          }
+        });
       }
     }
   }

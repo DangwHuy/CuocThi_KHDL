@@ -44,22 +44,60 @@ class ChartConfig {
     this.colors,
   });
 
+  factory ChartConfig.fromMap(Map<String, dynamic> json) {
+    final typeRaw = (json['type'] ?? 'bar').toString().toLowerCase();
+    final type = (typeRaw == 'groupedbar' || typeRaw == 'grouped_bar') 
+        ? 'grouped_bar' 
+        : typeRaw;
+        
+    final series = (json['series'] as List?)?.map((e) => e.toString()).toList();
+    
+    final data = (json['data'] as List?)?.map((item) {
+      final map = item as Map<String, dynamic>;
+      
+      // Extract value
+      double value = 0.0;
+      if (map.containsKey('value')) {
+        value = (map['value'] as num).toDouble();
+      } else if (series != null && series.isNotEmpty && map.containsKey(series[0])) {
+        value = (map[series[0]] as num?)?.toDouble() ?? 0.0;
+      }
+
+      // Extract grouped values
+      List<double>? values;
+      if (map['values'] != null) {
+        values = (map['values'] as List).map((e) => (e as num).toDouble()).toList();
+      } else if (series != null && series.isNotEmpty) {
+        values = series.map((s) => (map[s] as num?)?.toDouble() ?? 0.0).toList();
+      }
+
+      return ChartDataPoint(
+        label: map['label']?.toString() ?? '',
+        value: value,
+        color: map['color'],
+        values: values,
+      );
+    }).toList() ?? [];
+
+    return ChartConfig(
+      type: type,
+      title: json['title'] ?? '',
+      data: data,
+      xAxisLabel: json['xAxisLabel'],
+      yAxisLabel: json['yAxisLabel'],
+      color: json['color'],
+      series: series,
+      colors: (json['colors'] as List?)?.map((e) => e.toString()).toList(),
+    );
+  }
+
   static ChartConfig? tryParse(String jsonString) {
     try {
-      final Map<String, dynamic> json = jsonDecode(jsonString);
-      return ChartConfig(
-        type: json['type'] ?? 'bar',
-        title: json['title'] ?? '',
-        data: (json['data'] as List?)
-                ?.map((e) => ChartDataPoint.fromJson(e))
-                .toList() ??
-            [],
-        xAxisLabel: json['xAxisLabel'],
-        yAxisLabel: json['yAxisLabel'],
-        color: json['color'],
-        series: (json['series'] as List?)?.map((e) => e.toString()).toList(),
-        colors: (json['colors'] as List?)?.map((e) => e.toString()).toList(),
-      );
+      final json = jsonDecode(jsonString);
+      if (json is Map<String, dynamic>) {
+        return ChartConfig.fromMap(json);
+      }
+      return null;
     } catch (e) {
       print('ChartConfig parse error: $e');
       return null;

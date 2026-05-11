@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
     final settings = Provider.of<SettingsProvider>(context);
 
     return MaterialApp(
-      title: settings.isVietnamese ? 'Ứng dụng Web KHDL' : 'Data Science Web App',
+      title: settings.isVietnamese ? 'Hệ thống AI Phân tích dữ liệu' : 'AI Data Analytics System',
       debugShowCheckedModeBanner: false,
       themeMode: settings.themeMode,
       theme: AppTheme.lightTheme,

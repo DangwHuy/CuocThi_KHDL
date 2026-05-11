@@ -27,7 +27,9 @@ class GeminiService {
     required String userMessage,
     required String dataContext,
     String? base64Image,
+    Function(String)? onProgress,
   }) async {
+    onProgress?.call('Preparing AI prompt with data context...');
     final systemPrompt = '''
 Bạn là AI analyst chuyên nghiệp cho hệ thống phân tích bán lẻ và giao dịch
 Dưới đây là dữ liệu thực tế từ hệ thống của cửa hàng:
@@ -80,6 +82,7 @@ Sử dụng format chuẩn: {"type": "bar", "title": "...", "data": [{"label": "
     };
 
     try {
+      onProgress?.call('Engaging Deep Analytics LLM Engine...');
       final response = await http.post(
         Uri.parse(_endpoint),
         headers: {'Content-Type': 'application/json'},
@@ -87,27 +90,46 @@ Sử dụng format chuẩn: {"type": "bar", "title": "...", "data": [{"label": "
       );
 
       if (response.statusCode == 200) {
+        onProgress?.call('Response received, parsing analysis results...');
         final data = jsonDecode(response.body);
         if (data['candidates'] == null || data['candidates'].isEmpty) {
           throw 'AI không trả về kết quả (Candidate empty)';
         }
         final fullText = data['candidates'][0]['content']['parts'][0]['text'] as String;
         
-        // Split response
-        final parts = fullText.split('---CHART---');
-        final textResponse = parts[0].trim();
-        final chartJson = parts.length > 1 ? parts[1].trim() : '';
+        onProgress?.call('Formatting insights and generating visualizations...');
+        
+        // Robust parsing: Try splitting by separator first
+        String textResponse;
+        String chartJson = '';
+
+        if (fullText.contains('---CHART---')) {
+          final parts = fullText.split('---CHART---');
+          textResponse = parts[0].trim();
+          chartJson = parts.length > 1 ? parts[1].trim() : '';
+        } else {
+          // If no separator, try to find a JSON code block
+          final jsonBlockRegex = RegExp(r'```json\s*([\s\S]*?)\s*```');
+          final match = jsonBlockRegex.firstMatch(fullText);
+          if (match != null) {
+            chartJson = match.group(1) ?? '';
+            textResponse = fullText.replaceFirst(match.group(0)!, '').trim();
+          } else {
+            // Last resort: find anything that looks like a JSON object at the end
+            final lastBrace = fullText.lastIndexOf('}');
+            final firstBrace = fullText.lastIndexOf('{', lastBrace);
+            if (firstBrace != -1 && lastBrace != -1 && lastBrace > firstBrace) {
+              chartJson = fullText.substring(firstBrace, lastBrace + 1);
+              textResponse = fullText.substring(0, firstBrace).trim();
+            } else {
+              textResponse = fullText.trim();
+            }
+          }
+        }
 
         ChartConfig? chartConfig;
         if (chartJson.isNotEmpty) {
-          try {
-            final jsonStart = chartJson.indexOf('{');
-            final jsonEnd = chartJson.lastIndexOf('}');
-            if (jsonStart != -1 && jsonEnd != -1) {
-              final cleanJson = chartJson.substring(jsonStart, jsonEnd + 1);
-              chartConfig = ChartConfig.tryParse(cleanJson);
-            }
-          } catch (_) {}
+          chartConfig = ChartConfig.tryParse(chartJson);
         }
 
         _history.add({

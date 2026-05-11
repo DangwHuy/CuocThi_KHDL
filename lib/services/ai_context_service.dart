@@ -2,17 +2,28 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class AIContextService {
-  static Future<String> buildContext([String? query]) async {
+  static Future<String> buildContext([String? query, Function(String)? onProgress]) async {
     final context = StringBuffer();
     
+    onProgress?.call('Initializing data context analysis...');
     context.writeln('=== KHDL DS SYSTEM: FULL DATA CONTEXT ===');
 
+    onProgress?.call('Loading sales and product trends...');
     await _appendEDAData(context);
+    
+    onProgress?.call('Analyzing category distributions...');
     await _appendCategoryData(context);
+    
+    onProgress?.call('Processing customer RFM segments...');
     await _appendRFMData(context);
+    
+    onProgress?.call('Evaluating seasonality patterns...');
     await _appendSeasonalityData(context);
+    
+    onProgress?.call('Detecting data anomalies...');
     await _appendAnomalyData(context);
 
+    onProgress?.call('Context construction complete.');
     return context.toString();
   }
 

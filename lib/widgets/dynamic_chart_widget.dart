@@ -121,6 +121,7 @@ class _DynamicChartWidgetState extends State<DynamicChartWidget>
         case 'pie':
           return _buildPieChart(context);
         case 'grouped_bar':
+        case 'groupedbar':
           return _buildGroupedBarChart(context);
         case 'combo':
           return _buildComboChart(context);

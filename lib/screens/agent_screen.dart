@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:ui';
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +33,7 @@ class _AgentScreenState extends State<AgentScreen>
   final GeminiService _geminiService = GeminiService();
   final ChatStorageService _storageService = ChatStorageService();
   bool _isTyping = false;
+  final List<String> _thinkingLogs = [];
   XFile? _selectedImage;
   bool _inputFocused = false;
 
@@ -43,11 +45,18 @@ class _AgentScreenState extends State<AgentScreen>
   late AnimationController _dotController;
   late AnimationController _headerGlowController;
   late Animation<double> _headerGlowAnimation;
+  
+  // Auth listener to handle session restoration on Web
+  StreamSubscription? _authSubscription;
 
   @override
   void initState() {
     super.initState();
-    _loadHistoryFromFirestore();
+    
+    // Listen to auth changes to reload history when session is restored
+    _authSubscription = _storageService.authStateChanges().listen((user) {
+      _loadHistoryFromFirestore();
+    });
 
     _dotController = AnimationController(
       vsync: this,
@@ -70,6 +79,7 @@ class _AgentScreenState extends State<AgentScreen>
 
   @override
   void dispose() {
+    _authSubscription?.cancel();
     _dotController.dispose();
     _headerGlowController.dispose();
     _focusNode.dispose();
@@ -80,6 +90,10 @@ class _AgentScreenState extends State<AgentScreen>
     final history = await _storageService.loadChatHistory();
     if (mounted) {
       setState(() {
+        _messages.clear();
+        _chartHistory.clear();
+        _currentChart = null;
+
         if (history.isEmpty) {
           _addSystemMessage();
         } else {
@@ -159,16 +173,32 @@ class _AgentScreenState extends State<AgentScreen>
       setState(() {
         _messages.add(userMsg);
         _isTyping = true;
+        _thinkingLogs.clear();
         _selectedImage = null;
       });
       _scrollToBottom();
       _storageService.saveMessage(userMsg);
 
-      final dataContext = await AIContextService.buildContext(text);
+      final dataContext = await AIContextService.buildContext(
+        text,
+        (log) {
+          if (mounted) {
+            setState(() => _thinkingLogs.add(log));
+            _scrollToBottom();
+          }
+        },
+      );
+      
       final response = await _geminiService.sendMessage(
         userMessage: text,
         dataContext: dataContext,
         base64Image: base64Image,
+        onProgress: (log) {
+          if (mounted) {
+            setState(() => _thinkingLogs.add(log));
+            _scrollToBottom();
+          }
+        },
       );
 
       if (mounted) {
@@ -252,6 +282,7 @@ class _AgentScreenState extends State<AgentScreen>
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: ChartPanel(
+                    key: ValueKey(_chartHistory.length),
                     currentChart: _currentChart,
                     history: _chartHistory,
                     onSelect: (config) => setState(() => _currentChart = config),
@@ -795,64 +826,182 @@ class _AgentScreenState extends State<AgentScreen>
     );
   }
 
-  // ─── TYPING INDICATOR ────────────────────────────────────────
   Widget _buildTypingIndicator() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAvatar(Icons.auto_awesome_rounded, isUser: false),
-          const SizedBox(width: 10),
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(18),
-              topRight: Radius.circular(18),
-              bottomRight: Radius.circular(18),
-              bottomLeft: Radius.circular(4),
-            ),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                decoration: BoxDecoration(
-                  color: AppTheme.cardColor.withOpacity(0.9),
-                  border: Border.all(color: Colors.white.withOpacity(0.08)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List.generate(3, (i) {
-                    return AnimatedBuilder(
-                      animation: _dotController,
-                      builder: (context, child) {
-                        final delay = i * 0.18;
-                        final t = (_dotController.value - delay).clamp(0.0, 1.0);
-                        final bounce = (t < 0.5 ? t * 2 : (1 - t) * 2);
-                        return Container(
-                          margin: EdgeInsets.only(right: i < 2 ? 5 : 0),
-                          child: Transform.translate(
-                            offset: Offset(0, -4 * bounce),
-                            child: Container(
-                              width: 7,
-                              height: 7,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(18),
+                    topRight: Radius.circular(18),
+                    bottomRight: Radius.circular(18),
+                    bottomLeft: Radius.circular(4),
+                  ),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppTheme.cardColor.withOpacity(0.85),
+                        border: Border.all(
+                          color: AppTheme.primaryColor.withOpacity(0.2),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryColor.withOpacity(0.1),
+                            blurRadius: 20,
+                            spreadRadius: -5,
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'AI Agent đang suy nghĩ...',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.primaryColor.withOpacity(0.9),
+                                  letterSpacing: 0.2,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              _buildBouncingDots(),
+                            ],
+                          ),
+                          if (_thinkingLogs.isNotEmpty) ...[
+                            const SizedBox(height: 14),
+                            Container(
+                              padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: AppTheme.primaryColor
-                                    .withOpacity(0.4 + bounce * 0.5),
-                                shape: BoxShape.circle,
+                                color: Colors.black.withOpacity(0.25),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.05),
+                                ),
+                              ),
+                              child: Column(
+                                children: _thinkingLogs.asMap().entries.map((entry) {
+                                  final isLast = entry.key == _thinkingLogs.length - 1;
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                      bottom: isLast ? 0 : 10,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        // Animated icon
+                                        SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: isLast 
+                                            ? AnimatedBuilder(
+                                                animation: _dotController,
+                                                builder: (context, child) {
+                                                  return Transform.rotate(
+                                                    angle: _dotController.value * 2 * 3.14159,
+                                                    child: Icon(
+                                                      Icons.sync_rounded,
+                                                      size: 14,
+                                                      color: AppTheme.primaryColor,
+                                                    ),
+                                                  );
+                                                },
+                                              )
+                                            : Icon(
+                                                Icons.check_circle_rounded,
+                                                size: 14,
+                                                color: AppTheme.accentColor.withOpacity(0.8),
+                                              ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: isLast 
+                                            ? AnimatedBuilder(
+                                                animation: _dotController,
+                                                builder: (context, child) {
+                                                  return Opacity(
+                                                    opacity: 0.7 + (0.3 * (1 - (_dotController.value - 0.5).abs() * 2)),
+                                                    child: Text(
+                                                      entry.value,
+                                                      style: const TextStyle(
+                                                        fontSize: 12.5,
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.w600,
+                                                        letterSpacing: 0.1,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              )
+                                            : Text(
+                                                entry.value,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.white.withOpacity(0.45),
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  }),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildBouncingDots() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, (i) {
+        return AnimatedBuilder(
+          animation: _dotController,
+          builder: (context, child) {
+            final delay = i * 0.18;
+            final t = (_dotController.value - delay).clamp(0.0, 1.0);
+            final bounce = (t < 0.5 ? t * 2 : (1 - t) * 2);
+            return Container(
+              margin: EdgeInsets.only(right: i < 2 ? 4 : 0),
+              child: Transform.translate(
+                offset: Offset(0, -3 * bounce),
+                child: Container(
+                  width: 5,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withOpacity(0.4 + bounce * 0.6),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      }),
     );
   }
 

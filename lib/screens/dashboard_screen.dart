@@ -19,6 +19,7 @@ import 'pipeline_screen.dart';
 import 'realtime_screen.dart';
 import 'nlp_screen.dart';
 import 'agent_screen.dart';
+import 'algorithm_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -184,6 +185,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         selectedIcon: const Icon(Icons.smart_toy_rounded),
                         label: Text(settings.isVietnamese ? 'AI Agent' : 'AI Agent'),
                       ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.biotech_outlined),
+                        selectedIcon: const Icon(Icons.biotech_rounded),
+                        label: Text(settings.isVietnamese ? 'Thuật toán' : 'Algorithm'),
+                      ),
                       ],
                     ),
                   ),
@@ -199,7 +205,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   icon: const Icon(Icons.settings_outlined),
                   selectedIcon: const Icon(Icons.settings_rounded),
                   label: Text(settings.isVietnamese ? 'Cài đặt' : 'Settings'),
-                ).toRailDestination(context, 14, _selectedIndex, (idx) => setState(() => _selectedIndex = 14), isExtended),
+                ).toRailDestination(context, 15, _selectedIndex, (idx) => setState(() => _selectedIndex = 15), isExtended),
               ),
               const SizedBox(height: 10),
             ],
@@ -225,6 +231,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const RealtimeScreen(),
                 const NLPScreen(),
                 const AgentScreen(),
+                const AlgorithmScreen(),
                 const SettingsScreen(),
               ],
             ),
@@ -299,6 +306,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       {'icon': Icons.stream_rounded, 'label': settings.isVietnamese ? 'Thời gian thực' : 'Real-time Analytics', 'index': 11},
       {'icon': Icons.psychology_rounded, 'label': settings.isVietnamese ? 'Phân tích Cảm xúc' : 'NLP Sentiment', 'index': 12},
       {'icon': Icons.smart_toy_rounded, 'label': settings.isVietnamese ? 'Trợ lý AI Agent' : 'AI Agent Chat', 'index': 13},
+      {'icon': Icons.biotech_rounded, 'label': settings.isVietnamese ? 'Phòng thí nghiệm Thuật toán' : 'Algorithm Lab', 'index': 14},
     ];
 
     return Drawer(
@@ -362,9 +370,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 fontWeight: _selectedIndex == 14 ? FontWeight.bold : FontWeight.normal,
               ),
             ),
-            selected: _selectedIndex == 14,
+            selected: _selectedIndex == 15,
             onTap: () {
-              setState(() => _selectedIndex = 14);
+              setState(() => _selectedIndex = 15);
               Navigator.pop(context);
             },
           ),

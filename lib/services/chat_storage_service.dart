@@ -8,6 +8,8 @@ class ChatStorageService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String get _userId => _auth.currentUser?.uid ?? 'guest_user';
+  
+  Stream<User?> authStateChanges() => _auth.authStateChanges();
 
   // Lưu một tin nhắn mới
   Future<void> saveMessage(ChatMessage message) async {
@@ -40,20 +42,28 @@ class ChatStorageService {
           .orderBy('timestamp', descending: false)
           .get();
 
-      return snapshot.docs.map((doc) {
-        final data = doc.data();
-        return ChatMessage(
-          id: doc.id,
-          content: data['content'],
-          role: _parseRole(data['role']),
-          timestamp: (data['timestamp'] as Timestamp).toDate(),
-          chartConfig: data['chartConfig'] != null ? _mapToChartConfig(data['chartConfig']) : null,
-          imageUrl: data['imageUrl'],
-          status: _parseStatus(data['status']),
-        );
-      }).toList();
+      final messages = snapshot.docs.map((doc) {
+        try {
+          final data = doc.data();
+          return ChatMessage(
+            id: doc.id,
+            content: data['content'] ?? '',
+            role: _parseRole(data['role']),
+            timestamp: (data['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
+            chartConfig: data['chartConfig'] != null ? _mapToChartConfig(data['chartConfig']) : null,
+            imageUrl: data['imageUrl'],
+            status: _parseStatus(data['status']),
+          );
+        } catch (e) {
+          print('Error parsing message ${doc.id}: $e');
+          return null;
+        }
+      }).where((m) => m != null).cast<ChatMessage>().toList();
+
+      print('Loaded ${messages.length} messages for user: $_userId');
+      return messages;
     } catch (e) {
-      print('Error loading chat history: $e');
+      print('Error loading chat history from Firestore: $e');
       return [];
     }
   }
@@ -95,19 +105,7 @@ class ChatStorageService {
 
   // Chuyển đổi từ Map sang ChartConfig (thay vì dùng tryParse string)
   ChartConfig _mapToChartConfig(Map<String, dynamic> json) {
-    return ChartConfig(
-      type: json['type'] ?? 'bar',
-      title: json['title'] ?? '',
-      data: (json['data'] as List?)
-              ?.map((e) => ChartDataPoint.fromJson(Map<String, dynamic>.from(e)))
-              .toList() ??
-          [],
-      xAxisLabel: json['xAxisLabel'],
-      yAxisLabel: json['yAxisLabel'],
-      color: json['color'],
-      series: (json['series'] as List?)?.map((e) => e.toString()).toList(),
-      colors: (json['colors'] as List?)?.map((e) => e.toString()).toList(),
-    );
+    return ChartConfig.fromMap(json);
   }
 
   MessageRole _parseRole(String? roleStr) {
