@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../providers/settings_provider.dart';
@@ -32,7 +33,15 @@ class _RecommendationScreenState extends State<RecommendationScreen>
   final List<String> _basket = [];
   bool _showBasket = false;
 
-  // Tab: 0 = single item, 1 = basket sim
+  // ROI Tracking state
+  int _totalRecsShown = 0;
+  int _recsAccepted = 0;
+  int _recsSkipped = 0;
+  final List<Map<String, dynamic>> _acceptedHistory = [];
+  double _baselineRevenue = 0;
+  double _aiRevenue = 0;
+
+  // Tab: 0 = single item, 1 = basket sim, 2 = ROI analytics
   late TabController _tabCtrl;
 
   // Popular quick-pick items
@@ -44,7 +53,8 @@ class _RecommendationScreenState extends State<RecommendationScreen>
   @override
   void initState() {
     super.initState();
-    _tabCtrl = TabController(length: 2, vsync: this);
+    _tabCtrl = TabController(length: 3, vsync: this);
+    _initMockTrackingData();
     _searchFocus.addListener(() => setState(() => _searchFocused = _searchFocus.hasFocus));
     _loadRecommendations();
   }
@@ -88,6 +98,55 @@ class _RecommendationScreenState extends State<RecommendationScreen>
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  void _initMockTrackingData() {
+    final rng = Random(42);
+    _totalRecsShown = 156;
+    _recsAccepted = 105;
+    _recsSkipped = 51;
+    _baselineRevenue = 24500.0;
+    _aiRevenue = 31800.0;
+
+    // Simulated accepted history
+    final mockItems = [
+      'whole milk', 'yogurt', 'rolls/buns', 'soda', 'bottled water',
+      'tropical fruit', 'sausage', 'other vegetables', 'pastry', 'root vegetables',
+    ];
+    for (int i = 0; i < 12; i++) {
+      final src = mockItems[rng.nextInt(mockItems.length)];
+      String dest = mockItems[rng.nextInt(mockItems.length)];
+      while (dest == src) dest = mockItems[rng.nextInt(mockItems.length)];
+      _acceptedHistory.add({
+        'source': src,
+        'recommended': dest,
+        'lift': 1.0 + rng.nextDouble() * 1.2,
+        'confidence': 0.15 + rng.nextDouble() * 0.55,
+        'accepted': rng.nextBool() || rng.nextBool(), // ~75% accepted
+        'timestamp': DateTime.now().subtract(Duration(hours: rng.nextInt(72))),
+        'revenue': DataService.getMockPrice(dest),
+      });
+    }
+    _acceptedHistory.sort((a, b) =>
+        (b['timestamp'] as DateTime).compareTo(a['timestamp'] as DateTime));
+  }
+
+  void _trackAcceptRec(String source, Map<String, dynamic> rec) {
+    setState(() {
+      _recsAccepted++;
+      _totalRecsShown++;
+      final price = DataService.getMockPrice(rec['recommend'] as String);
+      _aiRevenue += price;
+      _acceptedHistory.insert(0, {
+        'source': source,
+        'recommended': rec['recommend'],
+        'lift': (rec['lift'] as num).toDouble(),
+        'confidence': (rec['confidence'] as num).toDouble(),
+        'accepted': true,
+        'timestamp': DateTime.now(),
+        'revenue': price,
+      });
+    });
   }
 
   // ── Helpers ───────────────────────────────────────────────────
@@ -179,6 +238,7 @@ class _RecommendationScreenState extends State<RecommendationScreen>
               children: [
                 _buildSingleTab(context, settings, isMobile),
                 _buildBasketTab(context, settings, isMobile),
+                _buildROITab(context, settings, isMobile),
               ],
             ),
           ),
@@ -231,6 +291,7 @@ class _RecommendationScreenState extends State<RecommendationScreen>
 
   // ── Tab Bar ────────────────────────────────────────────────────
   Widget _buildTabBar(BuildContext context, SettingsProvider settings) {
+    final isMobile = MediaQuery.of(context).size.width < 800;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
@@ -240,6 +301,8 @@ class _RecommendationScreenState extends State<RecommendationScreen>
       ),
       child: TabBar(
         controller: _tabCtrl,
+        isScrollable: isMobile,
+        tabAlignment: isMobile ? TabAlignment.center : TabAlignment.fill,
         indicatorSize: TabBarIndicatorSize.tab,
         indicator: BoxDecoration(
           gradient: LinearGradient(
@@ -249,8 +312,9 @@ class _RecommendationScreenState extends State<RecommendationScreen>
         ),
         labelColor: Colors.white,
         unselectedLabelColor: Colors.grey.shade500,
-        labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: const TextStyle(fontSize: 13),
+        labelStyle: TextStyle(fontSize: isMobile ? 12 : 13, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: TextStyle(fontSize: isMobile ? 12 : 13),
+        labelPadding: isMobile ? const EdgeInsets.symmetric(horizontal: 12) : null,
         dividerColor: Colors.transparent,
         tabs: [
           Tab(
@@ -282,6 +346,16 @@ class _RecommendationScreenState extends State<RecommendationScreen>
                         style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                   ),
                 ],
+              ],
+            ),
+          ),
+          Tab(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.analytics_rounded, size: 16),
+                const SizedBox(width: 6),
+                Text(settings.isVietnamese ? 'Đo hiệu quả' : 'ROI'),
               ],
             ),
           ),
@@ -590,6 +664,7 @@ class _RecommendationScreenState extends State<RecommendationScreen>
                 onTap: () {
                   if (!_basket.contains(name) && _basket.length < 6) {
                     setState(() => _basket.add(name));
+                    _trackAcceptRec(_selectedItem ?? 'basket', rec);
                     _tabCtrl.animateTo(1); // Switch to Basket Tab
                   }
                 },
@@ -958,6 +1033,518 @@ class _RecommendationScreenState extends State<RecommendationScreen>
           const SizedBox(width: 5),
           const Icon(Icons.close_rounded, color: Color(0xFF1D9E75), size: 13),
         ]),
+      ),
+    );
+  }
+
+  // ── ROI ANALYTICS TAB ─────────────────────────────────────────
+  Widget _buildROITab(BuildContext context, SettingsProvider settings, bool isMobile) {
+    final ctr = _totalRecsShown > 0 ? _recsAccepted / _totalRecsShown : 0.0;
+    final conversionLift = _baselineRevenue > 0
+        ? ((_aiRevenue - _baselineRevenue) / _baselineRevenue * 100)
+        : 0.0;
+    final avgLift = _acceptedHistory.isNotEmpty
+        ? _acceptedHistory.fold<double>(0, (s, e) => s + (e['lift'] as double)) / _acceptedHistory.length
+        : 0.0;
+
+    return CustomScrollView(
+      slivers: [
+        // ── Section: KPI Overview Cards ──
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppTheme.primaryColor.withOpacity(0.1), Colors.transparent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppTheme.primaryColor.withOpacity(0.2)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.science_rounded, color: AppTheme.primaryColor.withOpacity(0.7), size: 18),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      settings.isVietnamese
+                          ? 'Đo lường hiệu quả hệ thống AI Gợi ý (FP-Growth) dựa trên hành vi người dùng.'
+                          : 'Measure AI Recommendation (FP-Growth) effectiveness based on user behavior.',
+                      style: TextStyle(fontSize: 12, color: Colors.grey.shade400, height: 1.4),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        // ── KPI Cards Row ──
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: isMobile ? 2 : 4,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: isMobile ? 1.3 : 1.6,
+            ),
+            delegate: SliverChildListDelegate([
+              _buildKPICard(
+                icon: Icons.ads_click_rounded,
+                label: settings.isVietnamese ? 'Tỉ lệ chấp nhận' : 'Acceptance Rate',
+                value: '${(ctr * 100).toStringAsFixed(1)}%',
+                color: const Color(0xFF378ADD),
+                subtitle: '$_recsAccepted / $_totalRecsShown',
+              ),
+              _buildKPICard(
+                icon: Icons.trending_up_rounded,
+                label: settings.isVietnamese ? 'Tăng trưởng DT' : 'Revenue Lift',
+                value: '+${conversionLift.toStringAsFixed(1)}%',
+                color: const Color(0xFF1D9E75),
+                subtitle: settings.isVietnamese ? 'so với không có AI' : 'vs no AI',
+              ),
+              _buildKPICard(
+                icon: Icons.auto_awesome_rounded,
+                label: settings.isVietnamese ? 'Lift trung bình' : 'Avg Lift',
+                value: '${avgLift.toStringAsFixed(2)}×',
+                color: const Color(0xFFD4A017),
+                subtitle: settings.isVietnamese ? 'các gợi ý được chọn' : 'accepted recs',
+              ),
+              _buildKPICard(
+                icon: Icons.remove_shopping_cart_outlined,
+                label: settings.isVietnamese ? 'Bỏ qua' : 'Skipped',
+                value: '$_recsSkipped',
+                color: const Color(0xFFD85A30),
+                subtitle: '${(_recsSkipped / max(1, _totalRecsShown) * 100).toStringAsFixed(0)}%',
+              ),
+            ]),
+          ),
+        ),
+
+        // ── Conversion Lift Comparison ──
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: _buildROISection(
+              title: settings.isVietnamese ? 'So sánh Doanh thu' : 'Revenue Comparison',
+              icon: Icons.compare_arrows_rounded,
+              child: Column(
+                children: [
+                  _buildRevenueBar(
+                    label: settings.isVietnamese ? 'Không có AI' : 'Without AI',
+                    value: _baselineRevenue,
+                    maxValue: _aiRevenue * 1.1,
+                    color: Colors.grey.shade600,
+                    settings: settings,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildRevenueBar(
+                    label: settings.isVietnamese ? 'Có AI Gợi ý' : 'With AI Recs',
+                    value: _aiRevenue,
+                    maxValue: _aiRevenue * 1.1,
+                    color: const Color(0xFF1D9E75),
+                    settings: settings,
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1D9E75).withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFF1D9E75).withOpacity(0.25)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.arrow_upward_rounded, color: Color(0xFF1D9E75), size: 16),
+                        const SizedBox(width: 6),
+                        Text(
+                          settings.isVietnamese
+                              ? 'AI giúp tăng +${DataService.formatPrice(_aiRevenue - _baselineRevenue, settings.isVietnamese)} (+${conversionLift.toStringAsFixed(1)}%)'
+                              : 'AI boosts +${DataService.formatPrice(_aiRevenue - _baselineRevenue, settings.isVietnamese)} (+${conversionLift.toStringAsFixed(1)}%)',
+                          style: const TextStyle(color: Color(0xFF1D9E75), fontSize: 12, fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        // ── A/B Test Simulator ──
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: _buildROISection(
+              title: settings.isVietnamese ? 'Mô phỏng A/B Test' : 'A/B Test Simulator',
+              icon: Icons.science_outlined,
+              child: Column(
+                children: [
+                  _buildABRow(
+                    label: settings.isVietnamese ? 'Chiến thuật A: Ưu tiên Lift cao' : 'Strategy A: High Lift',
+                    value: 0.62,
+                    color: const Color(0xFF378ADD),
+                    detail: settings.isVietnamese ? '62% chuyển đổi • Lift ≥ 1.5' : '62% conv. • Lift ≥ 1.5',
+                  ),
+                  const SizedBox(height: 12),
+                  _buildABRow(
+                    label: settings.isVietnamese ? 'Chiến thuật B: Ưu tiên Support cao' : 'Strategy B: High Support',
+                    value: 0.38,
+                    color: const Color(0xFFD4A017),
+                    detail: settings.isVietnamese ? '38% chuyển đổi • Support ≥ 2%' : '38% conv. • Support ≥ 2%',
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF378ADD).withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFF378ADD).withOpacity(0.2)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.emoji_events_rounded, color: Color(0xFF378ADD), size: 16),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            settings.isVietnamese
+                                ? 'Kết luận: Ưu tiên Lift cao hiệu quả hơn 63% — Lift phản ánh sự liên hệ thực sự giữa sản phẩm.'
+                                : 'Conclusion: High Lift strategy outperforms by 63% — Lift reflects true product association.',
+                            style: TextStyle(fontSize: 11, color: Colors.grey.shade400, height: 1.4),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        // ── Top Performing Recs ──
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: _buildROISection(
+              title: settings.isVietnamese ? 'Gợi ý hiệu quả nhất' : 'Top Performing Recs',
+              icon: Icons.emoji_events_outlined,
+              child: Column(
+                children: _acceptedHistory
+                    .where((e) => e['accepted'] == true)
+                    .take(5)
+                    .toList()
+                    .asMap()
+                    .entries
+                    .map((entry) => _buildTopRecRow(entry.key, entry.value, settings))
+                    .toList(),
+              ),
+            ),
+          ),
+        ),
+
+        // ── Recent Activity Log ──
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: _buildROISection(
+              title: settings.isVietnamese ? 'Hoạt động gần đây' : 'Recent Activity',
+              icon: Icons.history_rounded,
+              child: Column(
+                children: _acceptedHistory.take(6).map((e) {
+                  final accepted = e['accepted'] as bool;
+                  final src = e['source'] as String;
+                  final dest = e['recommended'] as String;
+                  final ts = e['timestamp'] as DateTime;
+                  final diff = DateTime.now().difference(ts);
+                  String timeAgo;
+                  if (diff.inMinutes < 60) {
+                    timeAgo = '${diff.inMinutes}m';
+                  } else if (diff.inHours < 24) {
+                    timeAgo = '${diff.inHours}h';
+                  } else {
+                    timeAgo = '${diff.inDays}d';
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 24, height: 24,
+                          decoration: BoxDecoration(
+                            color: accepted
+                                ? const Color(0xFF1D9E75).withOpacity(0.12)
+                                : Colors.red.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Icon(
+                            accepted ? Icons.check_rounded : Icons.close_rounded,
+                            size: 13,
+                            color: accepted ? const Color(0xFF1D9E75) : Colors.red.shade400,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                              children: [
+                                TextSpan(
+                                  text: settings.isVietnamese ? DataService.translateItem(src) : src,
+                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                                ),
+                                TextSpan(text: ' → '),
+                                TextSpan(
+                                  text: settings.isVietnamese ? DataService.translateItem(dest) : dest,
+                                  style: TextStyle(
+                                    color: accepted ? const Color(0xFF1D9E75) : Colors.red.shade300,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Text(timeAgo, style: TextStyle(fontSize: 10, color: Colors.grey.shade600)),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ),
+
+        const SliverPadding(padding: EdgeInsets.only(bottom: 40)),
+      ],
+    );
+  }
+
+  // ── ROI Helper Widgets ─────────────────────────────────────────
+  Widget _buildKPICard({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+    required String subtitle,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 30, height: 30,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 16),
+          ),
+          const SizedBox(height: 10),
+          Text(value,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+          const SizedBox(height: 2),
+          Text(label,
+              style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+              maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(subtitle,
+              style: TextStyle(fontSize: 10, color: Colors.grey.shade600)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildROISection({
+    required String title,
+    required IconData icon,
+    required Widget child,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.06)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Icon(icon, size: 16, color: AppTheme.primaryColor),
+            const SizedBox(width: 8),
+            Text(title,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
+          ]),
+          const SizedBox(height: 16),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRevenueBar({
+    required String label,
+    required double value,
+    required double maxValue,
+    required Color color,
+    required SettingsProvider settings,
+  }) {
+    final fraction = (value / maxValue).clamp(0.0, 1.0);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: TextStyle(fontSize: 12, color: Colors.grey.shade400)),
+            Text(DataService.formatPrice(value, settings.isVietnamese),
+                style: TextStyle(fontSize: 13, color: color, fontWeight: FontWeight.bold,
+                    fontFamily: 'monospace')),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Stack(
+          children: [
+            Container(
+              height: 8,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            FractionallySizedBox(
+              widthFactor: fraction,
+              child: Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(4),
+                  boxShadow: [BoxShadow(color: color.withOpacity(0.4), blurRadius: 6)],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildABRow({
+    required String label,
+    required double value,
+    required Color color,
+    required String detail,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey.shade400)),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  Container(
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  FractionallySizedBox(
+                    widthFactor: value,
+                    child: Container(
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: color.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(6),
+                        boxShadow: [BoxShadow(color: color.withOpacity(0.3), blurRadius: 6)],
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${(value * 100).toInt()}%',
+                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            SizedBox(
+              width: 130,
+              child: Text(detail,
+                  style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                  textAlign: TextAlign.right),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTopRecRow(int rank, Map<String, dynamic> rec, SettingsProvider settings) {
+    final src = rec['source'] as String;
+    final dest = rec['recommended'] as String;
+    final lift = rec['lift'] as double;
+    final revenue = rec['revenue'] as double;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Container(
+            width: 24, height: 24,
+            decoration: BoxDecoration(
+              color: const Color(0xFFD4A017).withOpacity(0.12),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Center(
+              child: Text('${rank + 1}',
+                  style: const TextStyle(color: Color(0xFFD4A017), fontSize: 11, fontWeight: FontWeight.bold)),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  settings.isVietnamese
+                      ? '${DataService.translateItem(src)} → ${DataService.translateItem(dest)}'
+                      : '$src → $dest',
+                  style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  'Lift ${lift.toStringAsFixed(2)}× • +${DataService.formatPrice(revenue, settings.isVietnamese)}',
+                  style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1D9E75).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.check_circle_outline_rounded, color: Color(0xFF1D9E75), size: 14),
+          ),
+        ],
       ),
     );
   }

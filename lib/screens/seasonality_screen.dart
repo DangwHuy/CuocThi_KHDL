@@ -55,6 +55,73 @@ class _SeasonalityScreenState extends State<SeasonalityScreen>
   List<String> _mNames(bool vi) =>
       List<String>.from(_data[vi ? 'month_names_vi' : 'month_names_en'] ?? []);
 
+  Map<String, dynamic> get _seasonalProducts =>
+      Map<String, dynamic>.from(_data['seasonal_products'] ?? {});
+
+  List<Map<String, String>> _buildInsights(bool vi) {
+    final insights = <Map<String, String>>[];
+    final peakName = vi ? _stats['peak_month_name_vi'] : _stats['peak_month_name_en'];
+    final peakCount = _stats['peak_count'] ?? 0;
+    final yoy = _stats['yoy_growth'] ?? 0;
+
+    insights.add({
+      'icon': '📈',
+      'title': vi ? 'Tăng trưởng mạnh' : 'Strong Growth',
+      'text': vi
+          ? 'Năm 2015 tăng $yoy% so với 2014 — doanh nghiệp đang mở rộng thị phần thành công.'
+          : '2015 grew $yoy% YoY — business is successfully expanding market share.',
+    });
+    insights.add({
+      'icon': '🔥',
+      'title': vi ? 'Tháng cao điểm: $peakName' : 'Peak Month: $peakName',
+      'text': vi
+          ? '$peakCount giao dịch — tháng 8 là mùa tựu trường, nhu cầu mua sắm tăng vọt. Nên tăng tồn kho trước tháng 7.'
+          : '$peakCount transactions — August is back-to-school season. Stock up before July.',
+    });
+
+    // Find weakest month
+    if (_avgMonthly.isNotEmpty) {
+      int minCount = 999999;
+      int minMonth = 0;
+      for (final m in _avgMonthly) {
+        if ((m['count'] as int) < minCount) {
+          minCount = m['count'] as int;
+          minMonth = m['month'] as int;
+        }
+      }
+      final mNames = _mNames(vi);
+      final weakName = minMonth > 0 && minMonth <= mNames.length ? mNames[minMonth - 1] : '$minMonth';
+      insights.add({
+        'icon': '⚠️',
+        'title': vi ? 'Tháng thấp điểm: $weakName' : 'Low Month: $weakName',
+        'text': vi
+            ? 'Chỉ $minCount giao dịch — cần chiến lược khuyến mãi đặc biệt để kích cầu.'
+            : 'Only $minCount transactions — needs special promotions to boost demand.',
+      });
+    }
+
+    // Day of week insight
+    if (_dow.isNotEmpty) {
+      int maxDow = 0, maxDowCount = 0;
+      for (int i = 0; i < _dow.length; i++) {
+        if ((_dow[i]['count'] as int) > maxDowCount) {
+          maxDowCount = _dow[i]['count'] as int;
+          maxDow = i;
+        }
+      }
+      final dayName = vi ? _dow[maxDow]['name_vi'] : _dow[maxDow]['name_en'];
+      insights.add({
+        'icon': '📅',
+        'title': vi ? 'Ngày bán chạy nhất: $dayName' : 'Best Day: $dayName',
+        'text': vi
+            ? '$maxDowCount giao dịch — nên tập trung nhân sự và khuyến mãi vào ngày này.'
+            : '$maxDowCount transactions — focus staffing and promotions on this day.',
+      });
+    }
+
+    return insights;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -141,7 +208,34 @@ class _SeasonalityScreenState extends State<SeasonalityScreen>
                         sub: '${_stats["peak_count"]} ${vi ? "giao dịch" : "txns"}',
                         icon: Icons.local_fire_department_rounded,
                         color: const Color(0xFFEF4444)), // Modern Red
-                  ]),
+                   ]),
+                ),
+              ),
+
+              // ── NEW: AI Insights ──
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                  child: _section(
+                    title: vi ? '🧠 Phân tích AI tự động' : '🧠 AI Auto-Insights',
+                    icon: Icons.psychology_rounded,
+                    child: Column(
+                      children: _buildInsights(vi).map((insight) =>
+                          _buildInsightCard(insight, vi)).toList(),
+                    ),
+                  ),
+                ),
+              ),
+
+              // ── NEW: Seasonal Products ──
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                  child: _section(
+                    title: vi ? '🌿 Sản phẩm bán chạy theo Mùa' : '🌿 Seasonal Best Sellers',
+                    icon: Icons.eco_rounded,
+                    child: _buildSeasonalGrid(vi, mob),
+                  ),
                 ),
               ),
 
@@ -694,6 +788,227 @@ class _SeasonalityScreenState extends State<SeasonalityScreen>
                 overflow: TextOverflow.ellipsis,
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ════════════════════════ NEW: AI INSIGHT CARD ════════════════════════
+
+  Widget _buildInsightCard(Map<String, String> insight, bool vi) {
+    final colors = {
+      '📈': const Color(0xFF10B981),
+      '🔥': const Color(0xFFEF4444),
+      '⚠️': const Color(0xFFF59E0B),
+      '📅': const Color(0xFF3B82F6),
+    };
+    final color = colors[insight['icon']] ?? const Color(0xFF6366F1);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.06),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 36, height: 36,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(insight['icon']!, style: const TextStyle(fontSize: 18)),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  insight['title']!,
+                  style: TextStyle(
+                    fontSize: 13, fontWeight: FontWeight.w700,
+                    color: color,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  insight['text']!,
+                  style: TextStyle(
+                    fontSize: 12, color: Colors.grey.shade400,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ════════════════════════ NEW: SEASONAL GRID ════════════════════════
+
+  static const _seasonMeta = {
+    'spring': {'icon': '🌸', 'color': 0xFFF472B6, 'gradient1': 0xFFFBCFE8, 'gradient2': 0xFFF9A8D4},
+    'summer': {'icon': '☀️', 'color': 0xFFFBBF24, 'gradient1': 0xFFFDE68A, 'gradient2': 0xFFF59E0B},
+    'autumn': {'icon': '🍂', 'color': 0xFFF97316, 'gradient1': 0xFFFDBA74, 'gradient2': 0xFFEA580C},
+    'winter': {'icon': '❄️', 'color': 0xFF38BDF8, 'gradient1': 0xFF7DD3FC, 'gradient2': 0xFF0EA5E9},
+  };
+
+  Widget _buildSeasonalGrid(bool vi, bool mob) {
+    final sp = _seasonalProducts;
+    if (sp.isEmpty) {
+      return Center(
+        child: Text(
+          vi ? 'Chưa có dữ liệu mùa vụ' : 'No seasonal data available',
+          style: TextStyle(color: Colors.grey.shade500),
+        ),
+      );
+    }
+
+    final seasons = ['spring', 'summer', 'autumn', 'winter'];
+    Widget grid = GridView.count(
+      crossAxisCount: mob ? 1 : 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisSpacing: 14,
+      mainAxisSpacing: 14,
+      childAspectRatio: mob ? 1.7 : 3.0, // Tăng tỉ lệ để card mỏng đẹp khi trải rộng toàn màn hình
+      children: seasons.where((s) => sp.containsKey(s)).map((season) {
+        final data = sp[season] as Map<String, dynamic>;
+        final meta = _seasonMeta[season]!;
+        final products = List<Map<String, dynamic>>.from(data['products'] ?? []);
+        final seasonName = vi ? data['name_vi'] : data['name_en'];
+        final color = Color(meta['color'] as int);
+
+        return _buildSeasonCard(
+          seasonName: seasonName as String,
+          icon: meta['icon'] as String,
+          color: color,
+          products: products,
+          vi: vi,
+        );
+      }).toList(),
+    );
+
+    if (mob) return grid;
+    
+    return grid;
+  }
+
+  Widget _buildSeasonCard({
+    required String seasonName,
+    required String icon,
+    required Color color,
+    required List<Map<String, dynamic>> products,
+    required bool vi,
+  }) {
+    final maxCount = products.isNotEmpty
+        ? products.map((p) => p['count'] as int).reduce((a, b) => a > b ? a : b)
+        : 1;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.06),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(icon, style: const TextStyle(fontSize: 20)),
+              const SizedBox(width: 8),
+              Text(
+                seasonName,
+                style: TextStyle(
+                  fontSize: 15, fontWeight: FontWeight.w700,
+                  color: color,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '${products.length} ${vi ? "SP" : "items"}',
+                  style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Column(
+            children: products.take(5).map((p) {
+              final name = p['name'] as String;
+              final count = p['count'] as int;
+              final fraction = count / maxCount;
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 90,
+                      child: Text(
+                        vi ? DataService.translateItem(name) : name,
+                        style: TextStyle(fontSize: 11, color: Colors.grey.shade400),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ),
+                          FractionallySizedBox(
+                            widthFactor: fraction,
+                            child: Container(
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: color.withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SizedBox(
+                      width: 32,
+                      child: Text(
+                        '$count',
+                        style: TextStyle(
+                            fontSize: 10,
+                            color: color,
+                            fontFamily: 'monospace'),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),

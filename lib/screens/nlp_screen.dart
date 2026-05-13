@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:file_picker/file_picker.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -157,6 +158,91 @@ class _NLPScreenState extends State<NLPScreen> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lỗi chi tiết: $e')));
+    } finally {
+      if (mounted) setState(() => _isAnalyzing = false);
+    }
+  }
+
+  Future<void> _uploadCSV() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['csv', 'xlsx', 'xls'],
+        allowMultiple: true,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        setState(() => _isAnalyzing = true);
+
+        // Sử dụng URL có tham số skip-warning để lách qua lỗi Preflight/CORS của Ngrok
+        final cleanApiUrl = _apiUrl.endsWith('/') ? _apiUrl.substring(0, _apiUrl.length - 1) : _apiUrl;
+        final uploadUri = Uri.parse('$cleanApiUrl/analyze-batch-file').replace(
+          queryParameters: {'ngrok-skip-browser-warning': '1'}
+        );
+        
+        var request = http.MultipartRequest('POST', uploadUri);
+        
+        // Vẫn gửi kèm Header cho chắc chắn
+        request.headers.addAll({
+          'ngrok-skip-browser-warning': '1',
+          'Accept': 'application/json',
+        });
+
+        for (var file in result.files) {
+          if (file.bytes != null) {
+            request.files.add(http.MultipartFile.fromBytes(
+              'files', 
+              file.bytes!, 
+              filename: file.name
+            ));
+          } else if (file.path != null) {
+            request.files.add(await http.MultipartFile.fromPath('files', file.path!));
+          }
+        }
+
+        debugPrint('--- Đang gửi file tới: ${request.url} ---');
+        var streamedResponse = await request.send();
+        var response = await http.Response.fromStream(streamedResponse);
+
+        if (response.statusCode == 200) {
+          var finalResult = json.decode(response.body);
+          if (finalResult['data'] != null) {
+            int totalSaved = 0;
+            for (var fileData in finalResult['data']) {
+              if (fileData['results'] != null) {
+                for (var reviewResult in fileData['results']) {
+                  await FirebaseFirestore.instance.collection('ai_reviews').add({
+                    'text_vi': reviewResult['text'],
+                    'text_en': reviewResult['text'],
+                    'sentiment': reviewResult['sentiment'],
+                    'score': reviewResult['score'],
+                    'keywords': List<String>.from(reviewResult['keywords'] ?? []),
+                    'keywords_vi': reviewResult['keywords'],
+                    'keywords_en': reviewResult['keywords'],
+                    'date': FieldValue.serverTimestamp(),
+                  });
+                  totalSaved++;
+                }
+              }
+            }
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Thành công! Đã lưu $totalSaved đánh giá.'), backgroundColor: Colors.green),
+              );
+            }
+          }
+        } else {
+          debugPrint('Lỗi Server: ${response.body}');
+          throw 'Server trả về lỗi: ${response.statusCode}';
+        }
+      }
+    } catch (e) {
+      debugPrint('Lỗi hệ thống: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi: ${e.toString().split('\n')[0]}'), backgroundColor: Colors.red),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isAnalyzing = false);
     }
@@ -341,6 +427,12 @@ class _NLPScreenState extends State<NLPScreen> {
                 ),
                 onSubmitted: (_) => _analyzeReview(),
               ),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.upload_file_rounded, color: Colors.blueAccent),
+              onPressed: _isAnalyzing ? null : _uploadCSV,
+              tooltip: settings.isVietnamese ? 'Tải lên CSV' : 'Upload CSV',
             ),
             const SizedBox(width: 8),
             GestureDetector(
