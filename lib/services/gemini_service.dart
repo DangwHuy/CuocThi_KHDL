@@ -117,7 +117,7 @@ Sử dụng format chuẩn: {"type": "bar", "title": "...", "data": [{"label": "
           } else {
             // Last resort: find anything that looks like a JSON object at the end
             final lastBrace = fullText.lastIndexOf('}');
-            final firstBrace = fullText.lastIndexOf('{', lastBrace);
+            final firstBrace = lastBrace != -1 ? fullText.lastIndexOf('{', lastBrace) : -1;
             if (firstBrace != -1 && lastBrace != -1 && lastBrace > firstBrace) {
               chartJson = fullText.substring(firstBrace, lastBrace + 1);
               textResponse = fullText.substring(0, firstBrace).trim();

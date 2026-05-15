@@ -215,9 +215,10 @@ class _DynamicChartWidgetState extends State<DynamicChartWidget>
         borderData: FlBorderData(show: false),
         barGroups: widget.config.data.asMap().entries.map((e) {
           final isMax = e.value.value == maxValue;
+          // Sử dụng _pieColors để các cột có màu sắc riêng biệt hoàn toàn
           final color = widget.compact
               ? AppTheme.primaryColor
-              : _barColor(e.value.value, maxValue);
+              : _pieColors[e.key % _pieColors.length];
           final isTouched = e.key == _touchedIndex;
 
           return BarChartGroupData(
@@ -233,7 +234,9 @@ class _DynamicChartWidgetState extends State<DynamicChartWidget>
                     isMax
                         ? const Color(0xFFFFD700)
                         : color.withOpacity(isTouched ? 1.0 : 0.95),
-                    color.withOpacity(0.55),
+                    isMax 
+                        ? const Color(0xFFFFD700).withOpacity(0.3)
+                        : color.withOpacity(0.3),
                   ],
                 ),
                 width: isMax && !widget.compact

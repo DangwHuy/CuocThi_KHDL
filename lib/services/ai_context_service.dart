@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AIContextService {
   static Future<String> buildContext([String? query, Function(String)? onProgress]) async {
@@ -7,6 +8,30 @@ class AIContextService {
     
     onProgress?.call('Initializing data context analysis...');
     context.writeln('=== KHDL DS SYSTEM: FULL DATA CONTEXT ===');
+
+    onProgress?.call('Loading system architecture and features...');
+    context.writeln('''
+--- SYSTEM FEATURES & NAVIGATION ---
+Bạn đang là AI Agent (Trợ lý AI) tích hợp bên trong một Hệ thống Dashboard Phân tích Dữ liệu.
+Hệ thống của chúng ta có các chức năng (màn hình) sau ở thanh menu (Sidebar):
+1. Tổng quan: Xem chỉ số tổng quát.
+2. AI Gợi ý: Gợi ý hành động kinh doanh tự động.
+3. So sánh: So sánh hiệu quả các chiến dịch/sản phẩm.
+4. Dữ liệu: Duyệt dữ liệu thô.
+5. RFM: Phân khúc khách hàng theo mô hình RFM.
+6. Mùa vụ: Phân tích xu hướng theo thời gian.
+7. Phân cụm: Thuật toán gom cụm (K-Means/DBSCAN).
+8. Danh mục: Phân tích các ngành hàng.
+9. Bất thường: Phát hiện giao dịch/khách hàng bất thường (Anomaly Detection).
+10. Dự báo: Dự báo doanh thu/xu hướng tương lai (ARIMA/Prophet).
+11. Kiến trúc: Sơ đồ luồng dữ liệu của hệ thống.
+12. Live: Dữ liệu thời gian thực.
+13. NLP: Phân tích cảm xúc đánh giá khách hàng.
+14. AI Agent: Chính là bạn - nơi người dùng đang chat.
+15. Thuật toán: Thuyết minh các thuật toán KHDL đã dùng.
+
+Lưu ý: Khi người dùng hỏi hệ thống có chức năng gì, hãy tự tin trả lời dựa trên danh sách này.
+''');
 
     onProgress?.call('Loading sales and product trends...');
     await _appendEDAData(context);
@@ -23,6 +48,9 @@ class AIContextService {
     onProgress?.call('Detecting data anomalies...');
     await _appendAnomalyData(context);
 
+    onProgress?.call('Fetching NLP Sentiment data from Firebase...');
+    await _appendNLPData(context);
+
     onProgress?.call('Context construction complete.');
     return context.toString();
   }
@@ -31,7 +59,11 @@ class AIContextService {
     try {
       final eda = json.decode(await rootBundle.loadString('assets/data/eda_results.json'));
       sb.writeln('\n--- SALES & PRODUCTS ---');
-      final allItems = (eda['all_items'] as Map).entries.map((e) => '${e.key}:${e.value}').join('|');
+      
+      final allItemsMap = eda['all_items'] as Map;
+      sb.writeln('[Total_Unique_Products]: ${allItemsMap.length} mặt hàng');
+      
+      final allItems = allItemsMap.entries.map((e) => '${e.key}:${e.value}').join('|');
       sb.writeln('[All_Products_Inventory]: $allItems');
       
       final trends = eda['monthly_trend'] as Map;
@@ -102,5 +134,52 @@ class AIContextService {
         sb.writeln('[Customer_Anomalies (Top 10)]: $custList');
       }
     } catch (_) {}
+  }
+
+  static Future<void> _appendNLPData(StringBuffer sb) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance.collection('ai_reviews').get();
+      if (snapshot.docs.isEmpty) return;
+
+      int positive = 0;
+      int negative = 0;
+      int neutral = 0;
+      Map<String, int> keywordCounts = {};
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final sentiment = data['sentiment'] as String?;
+        if (sentiment == 'Positive') positive++;
+        else if (sentiment == 'Negative') negative++;
+        else if (sentiment == 'Neutral') neutral++;
+        // Count anything else as neutral if needed, or just ignore
+
+        if (data['keywords'] is List) {
+          for (var kw in data['keywords']) {
+            final keyword = kw.toString().toLowerCase().trim();
+            if (keyword.isNotEmpty) {
+              keywordCounts[keyword] = (keywordCounts[keyword] ?? 0) + 1;
+            }
+          }
+        }
+      }
+
+      final topKeywords = keywordCounts.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+      final top10Keywords = topKeywords.take(10).map((e) => '${e.key}(${e.value})').join(', ');
+
+      sb.writeln('\n--- CUSTOMER FEEDBACK & NLP SENTIMENT ---');
+      sb.writeln('[Sentiment_Distribution]: Positive=$positive, Negative=$negative, Neutral=$neutral');
+      sb.writeln('[Top_Keywords]: $top10Keywords');
+      sb.writeln('[Total_Reviews]: ${snapshot.docs.length}');
+      
+      sb.writeln('''
+BẮT BUỘC: Khi người dùng yêu cầu "vẽ biểu đồ" hoặc "trình bày biểu đồ" về dữ liệu NLP này, bạn PHẢI nối thêm phần cấu hình JSON ở cuối câu trả lời theo đúng định dạng sau:
+---CHART---
+{"type": "pie", "title": "Phân bổ Cảm xúc Khách hàng", "data": [{"label": "Tích cực", "value": $positive}, {"label": "Tiêu cực", "value": $negative}, {"label": "Trung tính", "value": $neutral}]}
+''');
+    } catch (e) {
+      sb.writeln('Error loading NLP data from Firebase: $e');
+    }
   }
 }

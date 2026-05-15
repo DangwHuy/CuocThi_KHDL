@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../models/chat_message.dart';
@@ -252,9 +253,32 @@ class _AgentScreenState extends State<AgentScreen>
   }
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) setState(() => _selectedImage = image);
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        withData: true, // Bắt buộc cho Web để lấy file dưới dạng bytes
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+        setState(() {
+          if (kIsWeb) {
+            _selectedImage = XFile.fromData(file.bytes!, name: file.name, path: file.name);
+          } else {
+            _selectedImage = XFile(file.path!);
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi tải ảnh: $e'),
+            backgroundColor: Colors.red.shade400,
+          ),
+        );
+      }
+    }
   }
 
   // ─── BUILD ────────────────────────────────────────────────────
@@ -1154,17 +1178,23 @@ class _AgentScreenState extends State<AgentScreen>
       {required IconData icon,
         required Color color,
         required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.08)),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        splashColor: color.withOpacity(0.2),
+        highlightColor: color.withOpacity(0.1),
+        child: Container(
+          width: 46,
+          height: 46,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white.withOpacity(0.08)),
+          ),
+          child: Icon(icon, size: 22, color: color),
         ),
-        child: Icon(icon, size: 19, color: color),
       ),
     );
   }
@@ -1178,10 +1208,22 @@ class _AgentScreenState extends State<AgentScreen>
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: kIsWeb
-                ? Image.network(_selectedImage!.path,
-                height: 72, width: 72, fit: BoxFit.cover)
+                ? FutureBuilder<Uint8List>(
+                    future: _selectedImage!.readAsBytes(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Image.memory(snapshot.data!,
+                            height: 72, width: 72, fit: BoxFit.cover);
+                      }
+                      return const SizedBox(
+                          height: 72,
+                          width: 72,
+                          child: Center(
+                              child: CircularProgressIndicator(strokeWidth: 2)));
+                    },
+                  )
                 : Image.file(File(_selectedImage!.path),
-                height: 72, width: 72, fit: BoxFit.cover),
+                    height: 72, width: 72, fit: BoxFit.cover),
           ),
           const SizedBox(width: 12),
           Expanded(
